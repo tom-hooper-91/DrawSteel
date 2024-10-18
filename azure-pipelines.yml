@@ -24,6 +24,6 @@ stages:
       displayName: Build an image
       inputs:
         command: build
-        dockerfile: '$(Build.SourcesDirectory)/DrawSteel/Dockerfile'
+        dockerfile: '$(Build.SourcesDirectory)/Web/Dockerfile'
         tags: |
           $(tag)

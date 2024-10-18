@@ -3,7 +3,7 @@
     image: drawsteel
     build:
       context: .
-      dockerfile: DrawSteel/Dockerfile
+      dockerfile: src/Web/Dockerfile
     container_name: Web
     ports:
       - 3000:8080
