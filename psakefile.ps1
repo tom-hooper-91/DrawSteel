@@ -1,9 +1,11 @@
 $infraDirectory = "$(Get-Location)/infra"
+$appDirectory = "$(Get-Location)/src"
 $tfVarsFile = "$infraDirectory/environment.tfvars"
 
-Task RunApp {
+Task DockerUp {
     Exec { docker compose up }
 }
+
 Task TerraformInit {
     Exec { terraform init -upgrade -reconfigure } -workingDirectory $infraDirectory
 }

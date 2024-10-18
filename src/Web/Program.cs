@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Web.Components;
 using Web.Components.Account;
-using Web.Data;
+using Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

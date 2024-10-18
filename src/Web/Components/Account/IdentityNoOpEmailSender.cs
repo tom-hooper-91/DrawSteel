@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Web.Data;
+using Infrastructure.Data;
 
 namespace Web.Components.Account;
 
