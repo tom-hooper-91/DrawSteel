@@ -1,10 +1,10 @@
 ﻿services:
   drawsteel:
-    image: drawsteel
+    image: draw-steel
     build:
       context: .
       dockerfile: src/Web/Dockerfile
-    container_name: web-app
+    container_name: web
     ports:
       - 3000:8080
     environment:

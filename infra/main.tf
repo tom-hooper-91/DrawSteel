@@ -11,10 +11,10 @@ terraform {
 
 provider "azurerm" {
   features {}
-  subscription_id = "c91bcad2-4067-42b8-922a-59fdb7707ad6"
+  subscription_id = "937c854e-4afb-4727-82ec-1bc86b6ed1d9"
 }
 
-resource "azurerm_resource_group" "draw_steel" {
+resource "azurerm_resource_group" "main" {
   name     = "draw-steel"
   location = "West Europe"
 }
