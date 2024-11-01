@@ -19,10 +19,18 @@ resource "azurerm_container_app" "main" {
   resource_group_name          = azurerm_resource_group.main.name
   revision_mode                = "Single"
 
+ingress {
+  target_port = 8080
+  external_enabled = true
+  traffic_weight {
+    latest_revision = true
+    percentage = 100
+  }
+}
   template {
     container {
-      name   = "examplecontainerapp"
-      image  = "mcr.microsoft.com/k8se/quickstart:latest"
+      name   = "draw-steel"
+      image  = "thooper91/draw-steel:latest"
       cpu    = 0.25
       memory = "0.5Gi"
     }
