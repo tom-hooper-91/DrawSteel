@@ -1,7 +1,7 @@
 resource "github_actions_secret" "dockerhub_username" {
   repository       = "DrawSteel"
   secret_name      = "DOCKERHUB_USERNAME"
-  plaintext_value  = "THooper91"
+  plaintext_value  = "thooper91"
 }
 
 resource "github_actions_secret" "dockerhub_token" {
