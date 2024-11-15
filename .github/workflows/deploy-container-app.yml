@@ -40,7 +40,8 @@ jobs:
   deploy:
     name: Deploy Container App
     permissions:
-      contents: none
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     needs: build
 
