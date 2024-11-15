@@ -40,13 +40,6 @@ ingress {
     }
   }
 
-  identity {
-    type = "UserAssigned"
-    identity_ids = [
-        azurerm_user_assigned_identity.draw_steel.id
-    ]
-  }
-
   registry {
     password_secret_name = local.dockerhub_token_secret_name
     server = "registry.hub.docker.com"
