@@ -1,8 +1,7 @@
 $infraDirectory = "$(Get-Location)/infra"
-$appDirectory = "$(Get-Location)/src"
 $tfVarsFile = "$infraDirectory/environment.tfvars"
 
-Task DockerUp {
+Task DockerRun {
     Exec { docker compose up --build -d }
 }
 

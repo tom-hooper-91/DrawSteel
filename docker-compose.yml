@@ -1,6 +1,6 @@
 ﻿services:
   draw-steel:
-    image: thooper91/draw-steel
+    image: thooper91/draw-steel:dev
     build:
       context: .
       dockerfile: src/Web/Dockerfile
