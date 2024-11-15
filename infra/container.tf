@@ -64,9 +64,3 @@ ingress {
     ]
   }
 }
-
-resource "azurerm_user_assigned_identity" "draw_steel" {
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-  name                = "draw-steel"
-}
