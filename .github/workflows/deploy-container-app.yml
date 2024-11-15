@@ -63,7 +63,7 @@ jobs:
             # registryUrl: dockerhub.io
             # registryUsername: ${{ secrets.DOCKERHUB_USERNAME }}
             # registryPassword: ${{ secrets.DOCKERHUB_TOKEN }}
-            containerAppName: $CONTAINER_APP_NAME
-            containerAppEnvironment: $CONTAINER_ENV_NAME
-            resourceGroup: $RESOURCE_GROUP_NAME
+            containerAppName: ${{ vars.CONTAINER_APP_NAME }}
+            containerAppEnvironment: ${{ vars.CONTAINER_ENV_NAME }}
+            resourceGroup: ${{ vars.RESOURCE_GROUP_NAME }}
             imageToDeploy: thooper91/draw-steel:latest
