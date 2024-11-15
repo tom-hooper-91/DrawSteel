@@ -3,6 +3,10 @@ name: Build and deploy a container app
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'infra/**'
+      - 'docker-compose.yml'
+      - 'psakefile.ps1'
   workflow_dispatch:
 
 permissions:
