@@ -73,4 +73,4 @@ jobs:
             containerAppEnvironment: ${{ vars.CONTAINER_ENV_NAME }}
             resourceGroup: ${{ vars.RESOURCE_GROUP_NAME }}
             imageToBuild: thooper91/draw-steel:${{ github.sha }}
-            targetPort: 80
+            targetPort: 8080
