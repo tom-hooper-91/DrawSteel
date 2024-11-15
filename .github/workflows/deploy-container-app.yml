@@ -28,6 +28,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          context: ./src/Web
+          file: ./src/Web/Dockerfile
           push: true
           tags: thooper91/draw-steel:latest
 
