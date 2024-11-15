@@ -3,7 +3,7 @@ $appDirectory = "$(Get-Location)/src"
 $tfVarsFile = "$infraDirectory/environment.tfvars"
 
 Task DockerUp {
-    Exec { docker compose up }
+    Exec { docker compose up --build -d }
 }
 
 Task TerraformInit {
