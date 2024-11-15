@@ -31,3 +31,9 @@ resource "azurerm_resource_group" "main" {
   name     = "draw-steel"
   location = "West Europe"
 }
+
+data "azurerm_subscription" "current" {
+}
+
+data "azuread_client_config" "current" {
+}
