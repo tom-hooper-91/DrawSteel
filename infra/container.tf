@@ -1,3 +1,7 @@
+locals {
+  dockerhub_token_secret_name = "registryhubdockercom-thooper91"
+}
+
 resource "azurerm_log_analytics_workspace" "main" {
   name                = "draw-steel"
   location            = azurerm_resource_group.main.location
@@ -40,6 +44,23 @@ ingress {
     type = "UserAssigned"
     identity_ids = [
         azurerm_user_assigned_identity.draw_steel.id
+    ]
+  }
+
+  registry {
+    password_secret_name = local.dockerhub_token_secret_name
+    server = "registry.hub.docker.com"
+    username = "thooper91"
+  }
+
+  secret {
+    name  = local.dockerhub_token_secret_name
+    value = var.dockerhub_token
+  }
+
+  lifecycle {
+    ignore_changes = [
+      template[0].container[0].image
     ]
   }
 }
