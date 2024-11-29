@@ -1,8 +1,12 @@
 $infraDirectory = "$(Get-Location)/infra"
 $tfVarsFile = "$infraDirectory/environment.tfvars"
 
-Task DockerRun {
-    Exec { docker compose up --build -d }
+Task Run {
+    Exec { docker compose -f .\docker-compose.yml up --build --watch }
+}
+
+Task RunApi {
+    Exec { docker compose -f .\docker-compose.api.yml up --build --watch }
 }
 
 Task TerraformInit {

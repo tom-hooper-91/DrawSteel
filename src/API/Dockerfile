@@ -7,20 +7,20 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Web/Web.csproj", "Web/"]
-RUN dotnet restore "Web/Web.csproj"
-COPY ["src/Web", "Web/"]
+COPY ["src/API/API.csproj", "API/"]
+RUN dotnet restore "API/API.csproj"
+COPY ["src/API", "API/"]
 COPY ["src/Application", "Application/"]
 COPY ["src/Domain", "Domain/"]
 COPY ["src/Infrastructure", "Infrastructure/"]
-WORKDIR "/src/Web"
-RUN dotnet build "Web.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
+WORKDIR "/src/API"
+RUN dotnet build "API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "Web.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Web.dll"]
+ENTRYPOINT ["dotnet", "API.dll"]
