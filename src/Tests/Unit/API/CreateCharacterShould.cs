@@ -1,8 +1,8 @@
-﻿using Application;
+﻿using API;
+using Application;
 using FakeItEasy;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Http;
-using CreateCharacter = API.CreateCharacter;
 
 namespace Tests.Unit.API;
 
@@ -13,9 +13,9 @@ public class CreateCharacterShould
     public void Call_CreateCharacter_action()
     {
         var createCharacterAction = A.Fake<ICreateCharacter>();
-        var createCharacter = new CreateCharacter(createCharacterAction);
+        var createCharacterApi = new Characters(createCharacterAction);
         
-        createCharacter.Run(A.Fake<HttpRequest>());
+        createCharacterApi.Create(A.Fake<HttpRequest>());
         
         A.CallTo(() => createCharacterAction.Execute()).MustHaveHappened();
     }

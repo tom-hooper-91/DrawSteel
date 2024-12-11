@@ -1,8 +1,8 @@
-﻿using Application;
+﻿using API;
+using Application;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CreateCharacter = API.CreateCharacter;
 
 namespace Tests.Acceptance;
 
@@ -14,8 +14,8 @@ public class CreateCharacterFeature
     {
         var request = A.Fake<HttpRequest>();
         var createCharacterAction = new Application.CreateCharacter();
-        var createCharacter = new CreateCharacter(createCharacterAction);
+        var createCharacter = new Characters(createCharacterAction);
         
-        Assert.That(createCharacter.Run(request), Is.TypeOf<OkObjectResult>());
+        Assert.That(createCharacter.Create(request), Is.TypeOf<OkObjectResult>());
     }
 }

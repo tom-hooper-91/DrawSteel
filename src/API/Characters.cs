@@ -5,11 +5,11 @@ using Microsoft.Azure.Functions.Worker;
 
 namespace API;
 
-public class CreateCharacter(ICreateCharacter CreateCharacter)
+public class Characters(ICreateCharacter CreateCharacter)
 {
     
-    [Function("/characters")]
-    public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
+    [Function("characters")]
+    public IActionResult Create([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
     {
         CreateCharacter.Execute();
         return new OkObjectResult("OK!");
