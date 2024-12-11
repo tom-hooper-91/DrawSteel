@@ -2,5 +2,5 @@
 
 public interface ICreateCharacter
 {
-    void Execute();
+    void Execute(CreateCharacterCommand command);
 }
