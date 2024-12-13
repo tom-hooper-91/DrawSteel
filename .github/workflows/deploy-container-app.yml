@@ -69,7 +69,7 @@ jobs:
         - name: Deploy Container App
           uses: azure/container-apps-deploy-action@v1
           with:
-            appSourcePath: ${{ github.workspace }}
+            appSourcePath: ${{ github.workspace }}/src
             registryUrl: registry.hub.docker.com
             registryUsername: ${{ secrets.DOCKERHUB_USERNAME }}
             registryPassword: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -77,4 +77,4 @@ jobs:
             containerAppEnvironment: ${{ vars.CONTAINER_ENV_NAME }}
             resourceGroup: ${{ vars.RESOURCE_GROUP_NAME }}
             imageToBuild: thooper91/draw-steel-api:${{ github.sha }}
-            dockerfilePath: src/API/Dockerfile
+            dockerfilePath: API/Dockerfile
