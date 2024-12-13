@@ -1,10 +1,10 @@
 # Draw Steel
 An aspiring character builder application for the Draw Steel RPG.
 
-Built with using dotnet with the following:
+Built using dotnet with the following:
 - Function app in the `API` project
 - Web app in the `Web` project
-- Interaction Driven Design core application in:
+- Interaction Driven Design core application:
     - `Application`
     - `Domain`
     - `Infrastructure`
@@ -13,13 +13,13 @@ Uses a `psakefile` for common commands.
 
 ## Developing locally
 
-### Run Application locally through docker compose
+### Run the Application locally through docker-compose
 ```
 Invoke-Psake DockerRun
 ```
 
 ## Infra
-Built for Azure Container Apps and managed via terraform through the `infra` directory. Currently relying only on local `environment.tfvars` and local state file.
+Built for Azure Container Apps and managed via Terraform through the `infra` directory. Currently relying only on local `environment.tfvars` and state file.
 
 ### Apply infrastrucure
 ```
