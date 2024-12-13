@@ -36,10 +36,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./src/Web/Dockerfile
+          context: /src
+          file: API/Dockerfile
           push: true
-          tags: thooper91/draw-steel:latest
+          tags: thooper91/draw-steel-api:latest
 
   deploy:
     name: Deploy Container App
@@ -76,5 +76,4 @@ jobs:
             containerAppName: ${{ vars.CONTAINER_APP_NAME }}
             containerAppEnvironment: ${{ vars.CONTAINER_ENV_NAME }}
             resourceGroup: ${{ vars.RESOURCE_GROUP_NAME }}
-            imageToBuild: thooper91/draw-steel:${{ github.sha }}
-            targetPort: 8080
+            imageToBuild: thooper91/draw-steel-api:${{ github.sha }}
