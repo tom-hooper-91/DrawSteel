@@ -36,8 +36,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: /src
-          file: API/Dockerfile
+          context: src
+          file: /API/Dockerfile
           push: true
           tags: thooper91/draw-steel-api:latest
 
