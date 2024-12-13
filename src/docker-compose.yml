@@ -15,7 +15,7 @@
     container_name: api
     build:
       context: .
-      dockerfile: API/API.Dockerfile
+      dockerfile: API/Dockerfile
     ports:
       - 5000:80
     environment:
