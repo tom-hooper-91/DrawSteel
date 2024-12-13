@@ -1,23 +1,23 @@
 ﻿services:
-  web:
-    image: thooper91/draw-steel-web:dev
-    build:
-      context: .
-      dockerfile: src/Web/Dockerfile
-    container_name: web
-    ports:
-      - 3000:8080
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+  # web:
+  #   image: thooper91/draw-steel-web:dev
+  #   build:
+  #     context: .
+  #     dockerfile: src/Web/Dockerfile
+  #   container_name: web
+  #   ports:
+  #     - 3000:8080
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
 
   api: 
     image: thooper91/draw-steel-api:dev
-    build:
-      context: .
-      dockerfile: src/API/Dockerfile
     container_name: api
+    build:
+      context: src
+      dockerfile: API/Dockerfile
     ports:
-      - 5000:8080
+      - 5000:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
@@ -25,7 +25,7 @@
 
   mongodb:
     image: mongodb/mongodb-community-server:6.0.7-ubi8
-    container_name: mongodb
+    container_name: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root

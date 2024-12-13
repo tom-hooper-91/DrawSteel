@@ -2,11 +2,11 @@ $infraDirectory = "$(Get-Location)/infra"
 $tfVarsFile = "$infraDirectory/environment.tfvars"
 
 Task Run {
-    Exec { docker compose -f .\docker-compose.yml up --build --watch }
+    Exec { func start --worker-runtime dotnet-isolated } -workingDirectory "./src/API"
 }
 
-Task RunApi {
-    Exec { docker compose -f .\docker-compose.api.yml up --build --watch }
+Task DockerRun {
+    Exec { docker compose up --build -d }
 }
 
 Task TerraformInit {
