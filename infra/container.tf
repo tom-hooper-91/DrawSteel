@@ -24,7 +24,7 @@ resource "azurerm_container_app" "main" {
   revision_mode                = "Single"
 
 ingress {
-  target_port = 8080
+  target_port = 80
   external_enabled = true
   traffic_weight {
     latest_revision = true
@@ -34,7 +34,7 @@ ingress {
   template {
     container {
       name   = "draw-steel"
-      image  = "thooper91/draw-steel:latest"
+      image  = "thooper91/draw-steel-api:latest"
       cpu    = 0.25
       memory = "0.5Gi"
     }

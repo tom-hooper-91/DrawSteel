@@ -13,15 +13,16 @@ terraform {
       version = "6.3.1"
     }
   }
-  required_version = "1.9.8"
+  required_version = "1.10.1"
 }
 
 provider "azurerm" {
   features {}
-  subscription_id = "c91bcad2-4067-42b8-922a-59fdb7707ad6"
+  subscription_id = var.azure_subscription_id
 }
 
 provider "azuread" {
+  tenant_id = var.azure_tenant_id
 }
 
 provider "github" {

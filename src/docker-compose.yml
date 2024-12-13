@@ -1,0 +1,49 @@
+﻿services:
+  # web:
+  #   image: thooper91/draw-steel-web:dev
+  #   build:
+  #     context: .
+  #     dockerfile: src/Web/Dockerfile
+  #   container_name: web
+  #   ports:
+  #     - 3000:8080
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+
+  api: 
+    image: thooper91/draw-steel-api:dev
+    container_name: api
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+    ports:
+      - 5000:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongodb/mongodb-community-server:6.0.7-ubi8
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGODB_CONNECTION_STRING: mongodb://root:example@mongodb:27017/
+    volumes:
+      - type: bind
+        source: ./data
+        target: /data/db
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false

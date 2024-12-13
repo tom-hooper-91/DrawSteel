@@ -1,12 +1,13 @@
 $infraDirectory = "$(Get-Location)/infra"
+$appDirectory = "$(Get-Location)/src"
 $tfVarsFile = "$infraDirectory/environment.tfvars"
 
 Task Run {
-    Exec { docker compose -f .\docker-compose.yml up --build --watch }
+    Exec { func start --worker-runtime dotnet-isolated } -workingDirectory "$appDirectory/API"
 }
 
-Task RunApi {
-    Exec { docker compose -f .\docker-compose.api.yml up --build --watch }
+Task DockerRun {
+    Exec { docker compose -p "draw-steel" up --build -d } -workingDirectory $appDirectory
 }
 
 Task TerraformInit {
