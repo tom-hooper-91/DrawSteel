@@ -18,7 +18,7 @@ public class HealthCheck
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
-        return new OkObjectResult("Healthy");
+        return new OkObjectResult("OK!");
     }
 
 }
