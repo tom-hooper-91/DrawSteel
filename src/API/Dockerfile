@@ -1,8 +1,7 @@
 ARG APP_CONFIGURATION_MODE=Release
 ARG STARTING_PROJECT=API/API.csproj
-ARG DOTNET_RUNTIME_TAG=4-dotnet-isolated8.0
 
-FROM mcr.microsoft.com/azure-functions/dotnet-isolated:${DOTNET_RUNTIME_TAG} AS base
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0 AS base
 EXPOSE 80
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true
@@ -16,7 +15,10 @@ WORKDIR /src
 # COPY Domain/Domain.csproj Domain/
 # COPY Infrastructure/Infrastructure.csproj Infrastructure/
 # RUN dotnet restore ${STARTING_PROJECT}
-COPY . .
+COPY API/ API/
+COPY Application/ Application/
+COPY Domain/ Domain/
+COPY Infrastructure/ Infrastructure/
 RUN dotnet build ${STARTING_PROJECT} \
 --configuration ${APP_CONFIGURATION_MODE}
 # --no-restore
