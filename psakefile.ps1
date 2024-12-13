@@ -7,7 +7,7 @@ Task Run {
 }
 
 Task DockerRun {
-    Exec { docker compose up --build -d } -workingDirectory $appDirectory
+    Exec { docker compose -p "draw-steel" up --build -d } -workingDirectory $appDirectory
 }
 
 Task TerraformInit {

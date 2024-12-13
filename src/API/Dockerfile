@@ -18,7 +18,7 @@ WORKDIR /src
 # RUN dotnet restore ${STARTING_PROJECT}
 COPY . .
 RUN dotnet build ${STARTING_PROJECT} \
---configuration ${APP_CONFIGURATION_MODE}  
+--configuration ${APP_CONFIGURATION_MODE}
 # --no-restore
 
 FROM build AS publish
