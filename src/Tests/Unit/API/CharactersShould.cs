@@ -3,11 +3,12 @@ using Application;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
+using Domain;
 
 namespace Tests.Unit.API;
 
 [TestFixture]
-public class CreateCharacterShould
+public class CharactersShould
 {
     private Characters _createCharacterApi;
     private ICreateCharacter _createCharacterAction;
@@ -21,7 +22,7 @@ public class CreateCharacterShould
     
     [TestCase("Frodo")]
     [TestCase("Sam")]
-    public void Call_CreateCharacter_action(string characterName)
+    public void Call_CreateCharacter_action_on_post(string characterName)
     {
         var command = new CreateCharacterCommand(characterName);
         var fakeRequest = A.Fake<HttpRequest>();

@@ -1,9 +1,11 @@
-﻿namespace Application;
+﻿using Domain;
 
-public class CreateCharacter : ICreateCharacter
+namespace Application;
+
+public class CreateCharacter(ICharacterFactory characterFactory) : ICreateCharacter
 {
     public void Execute(CreateCharacterCommand command)
     {
-        throw new NotImplementedException();
+        characterFactory.Create(command);
     }
 }

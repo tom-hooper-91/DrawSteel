@@ -1,13 +1,22 @@
-﻿using FakeItEasy;
+﻿using Application;
+using Domain;
+using FakeItEasy;
 
 namespace Tests.Unit.Application;
 
 [TestFixture]
 public class CreateCharacterShould
 {
-    [Test]
-    public void Call_CharacterFactory()
+    [TestCase("Frodo")]
+    [TestCase("Sam")]
+    public void Call_CharacterFactory(string name)
     {
-        Assert.Pass();
+        var characterFactory = A.Fake<ICharacterFactory>();
+        var createCharacter = new CreateCharacter(characterFactory);
+        var command = new CreateCharacterCommand(name);
+        
+        createCharacter.Execute(command);
+        
+        A.CallTo(() => characterFactory.Create(command)).MustHaveHappenedOnceExactly();
     }
 }
