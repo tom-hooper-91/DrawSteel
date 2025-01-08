@@ -15,7 +15,7 @@ public class CreateCharacterFeature
     {
         var request = A.Fake<HttpRequest>();
         var characterFactory = new CharacterFactory();
-        var createCharacterAction = new CreateCharacter(characterFactory);
+        var createCharacterAction = new CreateCharacter(characterFactory, new SaveCharacter());
         var createCharacter = new Characters(createCharacterAction);
         
         Assert.That(createCharacter.Create(request), Is.TypeOf<OkObjectResult>());
