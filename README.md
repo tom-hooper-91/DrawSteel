@@ -35,4 +35,4 @@ Invoke-Psake DestroyInfra
 ```
 
 ## Deployment
-Deployment through Github Actions currently triggers on push to `main` and will run tests, build and push to DockerHub and deploy to Azure
+Deployment through Github Actions currently triggers on push to `main` and will run tests, build and push to DockerHub and deploy to Azure.
