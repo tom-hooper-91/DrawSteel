@@ -7,6 +7,7 @@ on:
       - 'infra/**'
       - 'docker-compose.yml'
       - 'psakefile.ps1'
+      - 'README.md'
   workflow_dispatch:
 
 permissions:
