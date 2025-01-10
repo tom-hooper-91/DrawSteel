@@ -48,7 +48,7 @@ ingress {
 
   secret {
     name  = local.dockerhub_token_secret_name
-    value = var.dockerhub_token
+    value = data.azurerm_key_vault_secret.dockerhub_token.value
   }
 
   lifecycle {

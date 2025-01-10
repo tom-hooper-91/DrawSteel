@@ -5,13 +5,13 @@ locals {
 resource "github_actions_secret" "dockerhub_username" {
   repository       = "DrawSteel"
   secret_name      = "DOCKERHUB_USERNAME"
-  plaintext_value  = var.dockerhub_username
+  plaintext_value  = data.azurerm_key_vault_secret.dockerhub_username.value
 }
 
 resource "github_actions_secret" "dockerhub_token" {
   repository       = local.repo_name
   secret_name      = "DOCKERHUB_TOKEN"
-  plaintext_value = var.dockerhub_token
+  plaintext_value = data.azurerm_key_vault_secret.dockerhub_token.value
 }
 
 resource "github_actions_secret" "azure_client_id" {

@@ -20,13 +20,13 @@ Task TerraformValidate -depends TerraformInit {
 }
 
 Task PlanInfra -depends TerraformValidate {
-    Exec { terraform plan -var-file="$tfVarsFile" } -workingDirectory $infraDirectory
+    Exec { terraform plan } -workingDirectory $infraDirectory
 }
 
 Task ApplyInfra -depends TerraformValidate {
-    Exec { terraform apply -var-file="$tfVarsFile" } -workingDirectory $infraDirectory
+    Exec { terraform apply } -workingDirectory $infraDirectory
 }
 
 Task DestroyInfra {
-    Exec { terraform destroy -var-file="$tfVarsFile" } -workingDirectory $infraDirectory
+    Exec { terraform destroy } -workingDirectory $infraDirectory
 }
