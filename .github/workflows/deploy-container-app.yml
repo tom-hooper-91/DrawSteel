@@ -26,18 +26,21 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Build
-        run: dotnet build .\src
-
-      - name: Run Unit Tests
-        run: dotnet test .\src\Tests --filter FullyQualifiedName!~Tests.Acceptance
-        
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Install dependencies
+        run: dotnet restore ./src
+
+      - name: Build
+        run: dotnet build ./src
+
+      - name: Run Unit Tests
+        run: dotnet test ./src/Tests --filter FullyQualifiedName!~Tests.Acceptance
+        
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
