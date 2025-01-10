@@ -19,7 +19,7 @@ Invoke-Psake DockerRun
 ```
 
 ## Infra
-Built for Azure Container Apps and managed via Terraform through the `infra` directory. Currently relying only on local `environment.tfvars` and state file.
+Built for Azure Container Apps and managed via Terraform through the `infra` directory.
 
 ### Apply infrastrucure
 ```
@@ -35,4 +35,4 @@ Invoke-Psake DestroyInfra
 ```
 
 ## Deployment
-Deployment through Github Actions currently triggers on push to `main`
+Deployment through Github Actions currently triggers on push to `main` and will run tests, build and push to DockerHub and deploy to Azure
