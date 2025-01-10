@@ -1,8 +1,9 @@
 terraform {
+  required_version = "~> 1.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "4.4.0"
+      version = "4.14.0"
     }
     azuread = {
       source = "hashicorp/azuread"
@@ -12,8 +13,12 @@ terraform {
       source = "integrations/github"
       version = "6.3.1"
     }
+    random = {
+      source = "hashicorp/random"
+      version = "3.6.3"
+    }
   }
-  required_version = "1.10.1"
+  backend "azurerm" {}
 }
 
 provider "azurerm" {
@@ -31,10 +36,4 @@ provider "github" {
 resource "azurerm_resource_group" "main" {
   name     = "draw-steel"
   location = "West Europe"
-}
-
-data "azurerm_subscription" "current" {
-}
-
-data "azuread_client_config" "current" {
 }

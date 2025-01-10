@@ -1,6 +1,7 @@
 $infraDirectory = "$(Get-Location)/infra"
 $appDirectory = "$(Get-Location)/src"
 $tfVarsFile = "$infraDirectory/environment.tfvars"
+$backendConfig = "$infraDirectory/backend-config" 
 
 Task Run {
     Exec { func start --worker-runtime dotnet-isolated } -workingDirectory "$appDirectory/API"
@@ -11,7 +12,7 @@ Task DockerRun {
 }
 
 Task TerraformInit {
-    Exec { terraform init -upgrade -reconfigure } -workingDirectory $infraDirectory
+    Exec { terraform init -backend-config="$backendConfig" -upgrade -reconfigure } -workingDirectory $infraDirectory
 }
 
 Task TerraformValidate -depends TerraformInit {
