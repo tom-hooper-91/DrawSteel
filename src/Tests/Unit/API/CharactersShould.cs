@@ -32,4 +32,10 @@ public class CharactersShould
 
         A.CallTo(() => _createCharacterAction.Execute(command)).MustHaveHappened();
     }
+
+    [Test]
+    public void Test_fail()
+    {
+        Assert.Fail();
+    }
 }
