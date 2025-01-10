@@ -14,12 +14,20 @@ permissions:
 
 jobs:
   build:
-    name: Build and Push Image to Docker Hub
+    name: Build, Test and Push Image to Docker Hub
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+          
+      - name: Run Unit Tests
+        run: dotnet test .\src\Tests --filter FullyQualifiedName!~Tests.Acceptance
         
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
