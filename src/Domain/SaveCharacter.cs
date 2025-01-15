@@ -1,9 +1,11 @@
-﻿namespace Domain;
+﻿using Domain.Repositories;
 
-public class SaveCharacter : ISaveCharacter
+namespace Domain;
+
+public class SaveCharacter(ICharacterRepository characterRepository) : ISaveCharacter
 {
-    public void Save()
+    public void Save(Character character)
     {
-        throw new NotImplementedException();
+        characterRepository.Add(character);
     }
 }

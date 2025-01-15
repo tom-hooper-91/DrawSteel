@@ -6,7 +6,7 @@ public class CreateCharacter(ICharacterFactory characterFactory, ISaveCharacter 
 {
     public void Execute(CreateCharacterCommand command)
     {
-        characterFactory.Create(command);
-        saveCharacter.Save();
+        var character = characterFactory.Create(command);
+        saveCharacter.Save(character);
     }
 }

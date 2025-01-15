@@ -2,6 +2,7 @@
 using Application;
 using Domain;
 using FakeItEasy;
+using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,8 @@ public class CreateCharacterFeature
     {
         var request = A.Fake<HttpRequest>();
         var characterFactory = new CharacterFactory();
-        var createCharacterAction = new CreateCharacter(characterFactory, new SaveCharacter());
+        var characterRepository = new InMemoryCharacterRepository();
+        var createCharacterAction = new CreateCharacter(characterFactory, new SaveCharacter(characterRepository));
         var createCharacter = new Characters(createCharacterAction);
         
         Assert.That(createCharacter.Create(request), Is.TypeOf<OkObjectResult>());

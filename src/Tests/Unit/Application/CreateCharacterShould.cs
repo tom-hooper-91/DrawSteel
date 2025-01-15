@@ -34,9 +34,11 @@ public class CreateCharacterShould
     public void Call_SaveCharacter()
     {
         var command = new CreateCharacterCommand("Frodo");
+        var frodo = new Character(command.Name);
+        A.CallTo(() => _characterFactory.Create(command)).Returns(frodo);
         
         _createCharacter.Execute(command);
-        
-        A.CallTo(() => _saveCharacter.Save()).MustHaveHappenedOnceExactly();
+
+        A.CallTo(() => _saveCharacter.Save(frodo)).MustHaveHappenedOnceExactly();
     }
 }
