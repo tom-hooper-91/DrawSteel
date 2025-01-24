@@ -34,6 +34,6 @@ provider "github" {
 }
 
 resource "azurerm_resource_group" "main" {
-  name     = "draw-steel"
+  name     = local.common_app_name
   location = "West Europe"
 }

@@ -3,7 +3,7 @@ locals {
 }
 
 resource "azurerm_log_analytics_workspace" "main" {
-  name                = "draw-steel"
+  name                = local.common_app_name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   sku                 = "PerGB2018"
@@ -18,7 +18,7 @@ resource "azurerm_container_app_environment" "main" {
 }
 
 resource "azurerm_container_app" "main" {
-  name                         = "draw-steel"
+  name                         = local.common_app_name
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = azurerm_resource_group.main.name
   revision_mode                = "Single"
@@ -33,7 +33,7 @@ ingress {
 }
   template {
     container {
-      name   = "draw-steel"
+      name   = local.common_app_name
       image  = "thooper91/draw-steel-api:latest"
       cpu    = 0.25
       memory = "0.5Gi"
