@@ -12,12 +12,14 @@ resource "azurerm_key_vault" "main" {
   purge_protection_enabled    = false
 
   sku_name = "standard"
+}
 
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
+resource "azurerm_key_vault_access_policy" "client" {
+  key_vault_id = azurerm_key_vault.main.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
 
-    secret_permissions = [
+  secret_permissions = [
         "Backup",
         "Delete",
         "Get",
@@ -26,6 +28,16 @@ resource "azurerm_key_vault" "main" {
         "Recover",
         "Restore",
         "Set"
-    ]   
-  }
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "container_app" {
+  key_vault_id = azurerm_key_vault.main.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id = azurerm_container_app.main.identity[0].principal_id
+
+  secret_permissions = [
+        "Get",
+        "List"
+  ]
 }

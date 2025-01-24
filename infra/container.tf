@@ -56,4 +56,8 @@ ingress {
       template[0].container[0].image
     ]
   }
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
