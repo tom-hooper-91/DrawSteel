@@ -82,7 +82,7 @@ jobs:
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 
         - name: Deploy Container App
-          uses: azure/container-apps-deploy-action@v1
+          uses: azure/container-apps-deploy-action@v2
           with:
             appSourcePath: ${{ github.workspace }}/src
             registryUrl: registry.hub.docker.com
