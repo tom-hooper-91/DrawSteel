@@ -20,5 +20,4 @@ public class HealthCheck
         _logger.LogInformation("C# HTTP trigger function processed a request.");
         return new OkObjectResult("OK!");
     }
-
 }

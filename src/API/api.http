@@ -1,1 +1,3 @@
-﻿POST http://localhost:7071/api/characters
+﻿GET http://localhost:5000/api/ping?code=test
+###
+POST http://localhost:5000/api/characters
