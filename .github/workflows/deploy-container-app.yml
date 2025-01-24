@@ -93,3 +93,6 @@ jobs:
             resourceGroup: ${{ vars.RESOURCE_GROUP_NAME }}
             imageToBuild: thooper91/draw-steel-api:${{ github.sha }}
             dockerfilePath: API/Dockerfile
+            buildArguments: |
+              "AzureWebJobsSecretStorageType=KeyVault"
+              "AzureWebJobsSecretStorageKeyVaultUri=${{ secrets.KEYVAULT_URI }}"
