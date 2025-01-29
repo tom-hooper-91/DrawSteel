@@ -4,8 +4,8 @@ namespace Domain;
 
 public class SaveCharacter(ICharacterRepository characterRepository) : ISaveCharacter
 {
-    public void Save(Character character)
+    public CharacterId Save(Character character)
     {
-        characterRepository.Add(character);
+        return characterRepository.Add(character);
     }
 }

@@ -2,6 +2,7 @@
 using API;
 using Application;
 using Domain;
+using Domain.Repositories;
 using FakeItEasy;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +27,10 @@ public class CreateCharacterFeature
         var createCharacterAction = new CreateCharacter(characterFactory, new SaveCharacter(characterRepository));
         var createCharacter = new Characters(createCharacterAction);
         
-        Assert.That(createCharacter.Create(httpContext.Request), Is.TypeOf<OkObjectResult>());
+        Assert.Multiple(() =>
+        {
+            Assert.That(createCharacter.Create(httpContext.Request), Is.TypeOf<OkObjectResult>());
+            Assert.That(characterRepository.Get(new CharacterId(Guid.NewGuid())).Name, Is.EqualTo("Frodo"));
+        });
     }
 }

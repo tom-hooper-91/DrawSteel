@@ -4,6 +4,7 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 using Domain;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Tests.Unit.API;
 
@@ -27,9 +28,13 @@ public class CharactersShould
         var command = new CreateCharacterCommand(characterName);
         var fakeRequest = A.Fake<HttpRequest>();
         fakeRequest.Body = new StringContent(JsonSerializer.Serialize(new { Name = characterName })).ReadAsStream();
+        var expectedCharacterId = new CharacterId(Guid.NewGuid());
+        A.CallTo(() => _createCharacterAction.Execute(command)).Returns(expectedCharacterId);
         
-        _createCharacterApi.Create(fakeRequest);
+        var response = _createCharacterApi.Create(fakeRequest) as OkObjectResult;
+        var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
 
         A.CallTo(() => _createCharacterAction.Execute(command)).MustHaveHappened();
+        Assert.That(characterId, Is.EqualTo(expectedCharacterId));
     }
 }

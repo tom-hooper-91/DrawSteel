@@ -2,5 +2,6 @@
 
 public interface ICharacterRepository
 {
-    void Add(Character frodo);
+    CharacterId Add(Character character);
+    Character Get(CharacterId id);
 }

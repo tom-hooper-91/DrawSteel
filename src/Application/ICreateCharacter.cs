@@ -4,5 +4,5 @@ namespace Application;
 
 public interface ICreateCharacter
 {
-    void Execute(CreateCharacterCommand command);
+    CharacterId Execute(CreateCharacterCommand command);
 }

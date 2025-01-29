@@ -2,5 +2,5 @@
 
 public interface ISaveCharacter
 {
-    void Save(Character character);
+    CharacterId Save(Character character);
 }
