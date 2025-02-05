@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using API;
 using Application;
 using Domain;
@@ -25,12 +26,16 @@ public class CreateCharacterFeature
         var characterFactory = new CharacterFactory();
         var characterRepository = new InMemoryCharacterRepository();
         var createCharacterAction = new CreateCharacter(characterFactory, new SaveCharacter(characterRepository));
-        var createCharacter = new Characters(createCharacterAction);
+        var characters = new Characters(createCharacterAction);
+
+        var actionResult = characters.Create(httpContext.Request) as OkObjectResult;
+        var characterId = JsonSerializer.Deserialize<CharacterId>(actionResult!.Value!.ToString()!);
+        var frodo = characterRepository.Get(characterId!);
         
         Assert.Multiple(() =>
         {
-            Assert.That(createCharacter.Create(httpContext.Request), Is.TypeOf<OkObjectResult>());
-            Assert.That(characterRepository.Get(new CharacterId(Guid.NewGuid())).Name, Is.EqualTo("Frodo"));
+            Assert.That(actionResult, Is.TypeOf<OkObjectResult>());
+            Assert.That(frodo.Name, Is.EqualTo("Frodo"));
         });
     }
 }

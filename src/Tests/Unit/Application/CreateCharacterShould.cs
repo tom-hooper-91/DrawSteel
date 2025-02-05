@@ -26,7 +26,7 @@ public class CreateCharacterShould
         var command = new CreateCharacterCommand(name);
 
         _createCharacter.Execute(command);
-        
+
         A.CallTo(() => _characterFactory.Create(command)).MustHaveHappenedOnceExactly();
     }
 
@@ -36,7 +36,7 @@ public class CreateCharacterShould
         var command = new CreateCharacterCommand("Frodo");
         var frodo = new Character(command.Name);
         A.CallTo(() => _characterFactory.Create(command)).Returns(frodo);
-        
+
         _createCharacter.Execute(command);
 
         A.CallTo(() => _saveCharacter.Save(frodo)).MustHaveHappenedOnceExactly();

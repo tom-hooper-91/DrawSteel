@@ -14,13 +14,13 @@ public class Characters(ICreateCharacter CreateCharacter)
     public IActionResult Create([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
     {
         var jsonString = new StreamReader(req.Body).ReadToEnd();
-        var command = JsonSerializer.Deserialize<CreateCharacterCommand>(jsonString);
+        var command = JsonSerializer.Deserialize<CreateCharacterCommand>(jsonString, new JsonSerializerOptions{PropertyNameCaseInsensitive = true});
         
         if (command is null) 
             return new BadRequestObjectResult("Please pass a request body");
         
-        CreateCharacter.Execute(command);
+        var characterId = CreateCharacter.Execute(command);
         
-        return new OkObjectResult("OK!");
+        return new OkObjectResult(JsonSerializer.Serialize(characterId));
     }
 }
