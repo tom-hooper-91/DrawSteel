@@ -1,8 +1,7 @@
 ﻿using Domain;
-using Domain.Repositories;
 using Infrastructure;
 
-namespace Tests.Unit.Infrastructure;
+namespace Tests.Infrastructure;
 
 [TestFixture]
 public class InMemoryCharacterRepositoryShould

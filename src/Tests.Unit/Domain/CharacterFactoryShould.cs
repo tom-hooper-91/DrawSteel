@@ -1,6 +1,6 @@
 ﻿using Domain;
 
-namespace Tests.Unit.Domain;
+namespace Tests.Domain;
 
 [TestFixture]
 public class CharacterFactoryShould

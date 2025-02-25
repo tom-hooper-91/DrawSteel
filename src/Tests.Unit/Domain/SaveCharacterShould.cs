@@ -2,7 +2,7 @@
 using Domain.Repositories;
 using FakeItEasy;
 
-namespace Tests.Unit.Domain;
+namespace Tests.Domain;
 
 [TestFixture]
 public class SaveCharacterShould

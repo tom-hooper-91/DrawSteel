@@ -2,7 +2,7 @@
 using Domain;
 using FakeItEasy;
 
-namespace Tests.Unit.Application;
+namespace Tests.Application;
 
 [TestFixture]
 public class CreateCharacterShould

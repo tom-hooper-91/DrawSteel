@@ -3,13 +3,11 @@ using System.Text.Json;
 using API;
 using Application;
 using Domain;
-using Domain.Repositories;
-using FakeItEasy;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Tests.Acceptance;
+namespace Tests.Integration.Acceptance;
 
 [TestFixture]
 public class CreateCharacterFeature

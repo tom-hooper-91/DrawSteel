@@ -1,12 +1,12 @@
-﻿using API;
+﻿using System.Text.Json;
+using API;
 using Application;
+using Domain;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json;
-using Domain;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Tests.Unit.API;
+namespace Tests.API;
 
 [TestFixture]
 public class CharactersShould
