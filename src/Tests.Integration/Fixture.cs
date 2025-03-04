@@ -6,7 +6,7 @@ namespace Tests.Integration;
 public class Fixture
 {
     private CosmosDbContainer _cosmosDbContainer;
-    public string ConnectionString { get; private set; }
+    public static string ConnectionString { get; private set; } = null!;
 
     [OneTimeSetUp]
     public async Task Setup()
