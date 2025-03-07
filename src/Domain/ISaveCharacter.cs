@@ -2,5 +2,5 @@
 
 public interface ISaveCharacter
 {
-    CharacterId Save(Character character);
+    Task<CharacterId> Save(Character character);
 }

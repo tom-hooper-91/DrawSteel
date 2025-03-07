@@ -2,6 +2,6 @@
 
 public interface ICharacterRepository
 {
-    CharacterId Add(Character character);
-    Character Get(CharacterId id);
+    Task<CharacterId> Add(Character character);
+    Task<Character> Get(CharacterId id);
 }

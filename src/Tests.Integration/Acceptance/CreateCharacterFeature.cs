@@ -13,7 +13,7 @@ namespace Tests.Integration.Acceptance;
 public class CreateCharacterFeature
 {
     [Test]
-    public void Return_a_success()
+    public async Task Return_a_success()
     {
         var httpContext = new DefaultHttpContext();
         var stringData = Encoding.Default.GetBytes("{\n\"name\":\"Frodo\"\n}");
@@ -28,7 +28,7 @@ public class CreateCharacterFeature
 
         var actionResult = characters.Create(httpContext.Request) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(actionResult!.Value!.ToString()!);
-        var frodo = characterRepository.Get(characterId!);
+        var frodo = await characterRepository.Get(characterId!);
         
         Assert.Multiple(() =>
         {
