@@ -2,17 +2,19 @@
 
 namespace Infrastructure.Data;
 
-public class CharacterSeeder
+public class CharacterSeeder(CosmosClient client)
 {
-    public async Task SeedDatabase(CosmosClient client)
+    public async Task SeedDatabase()
     {
         const string databaseName = "drawsteel";
         const string containerName = "characters";
-        var database = client.CreateDatabaseIfNotExistsAsync(databaseName).Result.Database;
+        var response = await client.CreateDatabaseIfNotExistsAsync(databaseName);
+        var database = response.Database;
         var containerProperties = new ContainerProperties
         {
-            Id = containerName
+            Id = containerName,
+            PartitionKeyPath = "/id"
         };
-        await database.CreateContainerAsync(containerProperties);
+        await database.CreateContainerIfNotExistsAsync(containerProperties);
     }
 }

@@ -9,19 +9,17 @@ public class CharacterSeederShould
     [Test]
     public async Task Create_Characters_container()
     {
-        // var clientOptions = new CosmosClientOptions
-        // {
-        //     HttpClientFactory = () => new HttpClient(new HttpClientHandler
-        //     {
-        //         ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        //     }),
-        //     ConnectionMode = ConnectionMode.Gateway
-        // };
-        var client = new CosmosClient(Fixture.ConnectionString);
-        var database = client.GetDatabase("drawsteel");
-        var seeder = new CharacterSeeder();
+        var connectionString = $"{Fixture.ConnectionString};DisableServerCertificateValidation=True;";
+        var clientOptions = new CosmosClientOptions
+        {
+            HttpClientFactory = () => Fixture.HttpClient,
+            ConnectionMode = ConnectionMode.Gateway
+        };
+        var client = new CosmosClient(connectionString, clientOptions);
+        var seeder = new CharacterSeeder(client);
         
-        await seeder.SeedDatabase(client);
+        await seeder.SeedDatabase();
+        var database = client.GetDatabase("drawsteel");
         
         Assert.That(database.GetContainer("characters"), Is.Not.Null);
     }
