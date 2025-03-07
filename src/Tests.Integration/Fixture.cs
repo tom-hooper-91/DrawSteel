@@ -14,14 +14,7 @@ public class Fixture
     {
         _cosmosDbContainer = new CosmosDbBuilder()
             .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
-            .WithName("integration-cosmosdb")
-            .WithPortBinding(8081, 8081)
-            .WithPortBinding(10250, 10250)
-            .WithPortBinding(10251, 10251)
-            .WithPortBinding(10252, 10252)
-            .WithPortBinding(10253, 10253)
-            .WithPortBinding(10254, 10254)
-            .WithPortBinding(10255, 10255)
+            .WithName("integration-test-cosmosdb")
             .Build();
         await _cosmosDbContainer.StartAsync();
         ConnectionString = _cosmosDbContainer.GetConnectionString();
