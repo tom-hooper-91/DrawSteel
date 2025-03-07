@@ -8,30 +8,40 @@ namespace Tests.Infrastructure;
 [TestFixture]
 public class CosmosDbCharacterRepositoryShould
 {
-    [Test]
-    public async Task Save_a_Character()
+    private Container _container;
+    private CosmosDbCharacterRepository _repository;
+    private CharacterId _expectedCharacterId;
+    private PartitionKey _partitionKey;
+    private Character _character;
+
+    [SetUp]
+    public void SetUp()
     {
-        var character = A.Fake<Character>();
-        var characterId = character.Id;
-        var container = A.Fake<Container>();
+        _container = A.Fake<Container>();
         var response = A.Fake<ItemResponse<Character>>();
-        var partitionKey = new PartitionKey("/id");
-        var repository = new CosmosDbCharacterRepository(container, partitionKey);
-        // A.CallTo(() => response.Resource).Returns(character);
+        _character = response.Resource;
+        _expectedCharacterId = _character.Id;
+        _partitionKey = new PartitionKey(_expectedCharacterId.ToString());
+        _repository = new CosmosDbCharacterRepository(_container);
         A.CallTo(
-                () => container.CreateItemAsync(character, partitionKey, default, default))
+                () => _container.CreateItemAsync(_character, _partitionKey, default, default))
             .Returns(Task.FromResult(response));
-        A.CallTo(() => container.ReadItemAsync<Character>(characterId.ToString(), partitionKey, default, default))
+        A.CallTo(() => _container.ReadItemAsync<Character>(_expectedCharacterId.ToString(), _partitionKey, default, default))
             .Returns(Task.FromResult(response));
+    }
+    
+    [Test]
+    public async Task Add_then_Get_a_Character()
+    {
+        var characterId = await _repository.Add(_character);
+        var retrievedCharacter = await _repository.Get(characterId);
         
-        await repository.Add(character);
-        
-        Assert.Multiple(async () =>
+        Assert.Multiple(() =>
         {
-            Assert.That(await repository.Get(characterId), Is.EqualTo(character));
-            A.CallTo(() => container.ReadItemAsync<Character>(characterId.ToString(), new PartitionKey(character.Id.ToString()), default, default))
+            Assert.That(retrievedCharacter.Id, Is.EqualTo(_expectedCharacterId));
+            A.CallTo(() => _container.ReadItemAsync<Character>(_expectedCharacterId.ToString(), _partitionKey, default, default))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => container.CreateItemAsync(character, new PartitionKey(character.Id.ToString()), default, default))
+            A.CallTo(() => _container.CreateItemAsync(_character, _partitionKey, default, default))
                 .MustHaveHappenedOnceExactly();
         });
     }

@@ -22,11 +22,11 @@ public class CreateCharacterFeature
         httpContext.Request.Body = new MemoryStream(stringData);
         
         var characterFactory = new CharacterFactory();
-        var characterRepository = new InMemoryCharacterRepository();
+        var characterRepository = new InMemoryCharacterRepository(); // TODO replace with CosmosDbCharacterRepository
         var createCharacterAction = new CreateCharacter(characterFactory, new SaveCharacter(characterRepository));
         var characters = new Characters(createCharacterAction);
 
-        var actionResult = characters.Create(httpContext.Request) as OkObjectResult;
+        var actionResult = await characters.Create(httpContext.Request) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(actionResult!.Value!.ToString()!);
         var frodo = await characterRepository.Get(characterId!);
         

@@ -23,7 +23,7 @@ public class CharactersShould
 
     [TestCase("Frodo")]
     [TestCase("Sam")]
-    public void Call_CreateCharacter_action_on_post(string characterName)
+    public async Task Call_CreateCharacter_action_on_post(string characterName)
     {
         var command = new CreateCharacterCommand(characterName);
         var fakeRequest = A.Fake<HttpRequest>();
@@ -31,7 +31,7 @@ public class CharactersShould
         var expectedCharacterId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => _createCharacterAction.Execute(command)).Returns(expectedCharacterId);
 
-        var response = _createCharacterApi.Create(fakeRequest) as OkObjectResult;
+        var response = await _createCharacterApi.Create(fakeRequest) as OkObjectResult;
         var jsonSerializerOptions = new JsonSerializerOptions{PropertyNameCaseInsensitive = true};
         var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!, jsonSerializerOptions);
 

@@ -11,7 +11,7 @@ public class Characters(ICreateCharacter CreateCharacter)
 {
     
     [Function("characters")]
-    public IActionResult Create([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
+    public async Task<IActionResult> Create([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
     {
         var jsonString = new StreamReader(req.Body).ReadToEnd();
         var command = JsonSerializer.Deserialize<CreateCharacterCommand>(jsonString, new JsonSerializerOptions{PropertyNameCaseInsensitive = true});
@@ -19,7 +19,7 @@ public class Characters(ICreateCharacter CreateCharacter)
         if (command is null) 
             return new BadRequestObjectResult("Please pass a request body");
         
-        var characterId = CreateCharacter.Execute(command);
+        var characterId = await CreateCharacter.Execute(command);
         
         return new OkObjectResult(JsonSerializer.Serialize(characterId));
     }
