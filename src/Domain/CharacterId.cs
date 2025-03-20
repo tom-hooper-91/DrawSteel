@@ -1,3 +1,8 @@
-﻿namespace Domain;
+﻿using System.Text.Json.Serialization;
 
-public record CharacterId(Guid Value);
+namespace Domain;
+
+public record CharacterId(Guid Value)
+{
+    public override string ToString() => Value.ToString();
+}

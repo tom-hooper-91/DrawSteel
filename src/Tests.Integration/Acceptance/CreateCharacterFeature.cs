@@ -4,8 +4,10 @@ using API;
 using Application;
 using Domain;
 using Infrastructure;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Cosmos;
 
 namespace Tests.Integration.Acceptance;
 
@@ -22,7 +24,11 @@ public class CreateCharacterFeature
         httpContext.Request.Body = new MemoryStream(stringData);
         
         var characterFactory = new CharacterFactory();
-        var characterRepository = new InMemoryCharacterRepository(); // TODO replace with CosmosDbCharacterRepository
+        var seeder = new CharacterSeeder(Fixture.Client);
+        await seeder.SeedDatabase();
+        var container = Fixture.Client.GetDatabase("drawsteel").GetContainer("characters");
+        var characterRepository = new CosmosDbCharacterRepository(container);
+        // var characterRepository = new InMemoryCharacterRepository();
         var createCharacterAction = new CreateCharacter(characterFactory, new SaveCharacter(characterRepository));
         var characters = new Characters(createCharacterAction);
 

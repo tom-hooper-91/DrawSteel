@@ -8,7 +8,7 @@ public class CosmosDbCharacterRepository(Container container) : ICharacterReposi
 {
     public async Task<CharacterId> Add(Character character)
     {
-        var response = await container.CreateItemAsync(character, new PartitionKey(character.Id.ToString()));
+        var response = await container.CreateItemAsync(character, new PartitionKey(character.Id.ToString())); // Look into partition key
         return response.Resource.Id;
     }
 
