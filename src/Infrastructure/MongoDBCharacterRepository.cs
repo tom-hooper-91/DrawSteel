@@ -14,7 +14,6 @@ public class MongoDbCharacterRepository(IMongoCollection<Character> characters) 
 
     public async Task<Character> Get(CharacterId id)
     {
-        var result = await characters.FindAsync(character => character.Id == id);
-        return await result.SingleAsync();
+        return await characters.Find(character => character.Id == id).SingleOrDefaultAsync();
     }
 }

@@ -14,7 +14,7 @@ public class Fixture
     {
         _mongoDbContainer = new MongoDbBuilder()
             .WithImage("mongo:6.0")
-            .WithName("testcontainers-mongodb")
+            .WithName("test-containers-mongodb")
             .Build();
         await _mongoDbContainer.StartAsync();
         Client = new MongoClient(_mongoDbContainer.GetConnectionString());
