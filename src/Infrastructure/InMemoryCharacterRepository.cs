@@ -1,5 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
-using Domain;
+﻿using Domain;
 using Domain.Repositories;
 
 namespace Infrastructure;

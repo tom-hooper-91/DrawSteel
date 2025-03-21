@@ -1,35 +1,29 @@
-﻿using Microsoft.Azure.Cosmos;
-using Testcontainers.CosmosDb;
+﻿using MongoDB.Driver;
+using Testcontainers.MongoDb;
 
 namespace Tests.Integration;
 
 [SetUpFixture]
 public class Fixture
 {
-    private CosmosDbContainer _cosmosDbContainer;
-    public static CosmosClient Client { get; private set; } = null!;
+    private MongoDbContainer _mongoDbContainer;
+    public static MongoClient Client = null!;
 
     [OneTimeSetUp]
     public async Task Setup()
     {
-        _cosmosDbContainer = new CosmosDbBuilder()
-            .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
-            .WithName("integration-test-cosmosdb")
+        _mongoDbContainer = new MongoDbBuilder()
+            .WithImage("mongo:6.0")
+            .WithName("testcontainers-mongodb")
             .Build();
-        await _cosmosDbContainer.StartAsync();
-        var connectionString = $"{_cosmosDbContainer.GetConnectionString()};DisableServerCertificateValidation=True;";
-        var clientOptions = new CosmosClientOptions
-        {
-            HttpClientFactory = () => _cosmosDbContainer.HttpClient,
-            ConnectionMode = ConnectionMode.Gateway
-        };
-        Client = new CosmosClient(connectionString, clientOptions);
+        await _mongoDbContainer.StartAsync();
+        Client = new MongoClient(_mongoDbContainer.GetConnectionString());
     }
     
     [OneTimeTearDown]
     public async Task TearDown()
     {
-        await _cosmosDbContainer.DisposeAsync();
+        await _mongoDbContainer.DisposeAsync();
         Client.Dispose();
     }
 }

@@ -1,5 +1,3 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Domain;
+﻿namespace Domain;
 
 public record CreateCharacterCommand(string Name);
