@@ -1,15 +1,4 @@
 ﻿services:
-  # web:
-  #   image: thooper91/draw-steel-web:dev
-  #   build:
-  #     context: .
-  #     dockerfile: src/Web/Dockerfile
-  #   container_name: web
-  #   ports:
-  #     - 3000:8080
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-
   api: 
     image: thooper91/draw-steel-api:dev
     container_name: api
