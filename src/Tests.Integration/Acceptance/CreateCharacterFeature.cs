@@ -22,7 +22,8 @@ public class CreateCharacterFeature
         httpContext.Request.Body = new MemoryStream(stringData);
         
         var characterFactory = new CharacterFactory();
-        var characterRepository = new InMemoryCharacterRepository();
+        var collection = Fixture.Client.GetDatabase("drawsteel").GetCollection<Character>("characters");
+        var characterRepository = new MongoDbCharacterRepository(collection);
         var createCharacterAction = new CreateCharacter(characterFactory, new SaveCharacter(characterRepository));
         var characters = new Characters(createCharacterAction);
 

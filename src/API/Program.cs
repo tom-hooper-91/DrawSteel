@@ -15,4 +15,4 @@ builder.Services.AddScoped<ISaveCharacter, SaveCharacter>();
 //     .AddApplicationInsightsTelemetryWorkerService()
 //     .ConfigureFunctionsApplicationInsights();
 
-builder.Build().Run();
+await builder.Build().RunAsync();
