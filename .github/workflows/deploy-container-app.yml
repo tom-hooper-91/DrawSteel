@@ -39,8 +39,8 @@ jobs:
       - name: Build
         run: dotnet build ./src --no-restore
 
-      - name: Run Unit Tests
-        run: dotnet test ./src/Tests --no-build --filter FullyQualifiedName!~Tests.Acceptance
+      - name: Run Tests
+        run: dotnet test ./src --no-build
         
       - name: Login to Docker Hub
         uses: docker/login-action@v3

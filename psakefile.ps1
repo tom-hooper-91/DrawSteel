@@ -11,6 +11,10 @@ Task DockerRun {
     Exec { docker compose -p "draw-steel" up --build -d } -workingDirectory $appDirectory
 }
 
+Task Test {
+    Exec { dotnet test } -workingDirectory $appDirectory
+}
+
 Task TerraformInit {
     Exec { terraform init -backend-config="$backendConfig" -upgrade -reconfigure } -workingDirectory $infraDirectory
 }
