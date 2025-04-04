@@ -9,12 +9,10 @@ public static class Extensions
 {
     public static FunctionsApplicationBuilder ConfigureDatabase(this FunctionsApplicationBuilder builder)
     {
-        // var client = new MongoClient(Environment.GetEnvironmentVariable("MongoDB:ConnectionString"));
-        var client = new MongoClient("mongodb://localhost:27017");
-        // nothing is created exist until a document is inserted
+        var client = new MongoClient("mongodb://root:example@mongodb:27017/");
         var database = client.GetDatabase(DatabaseConstants.DrawSteel);
         var collection = database.GetCollection<Character>(DatabaseConstants.Characters);
-        collection.InsertOne(new Character("Test")); // this bricks it
+        collection.InsertOne(new Character("Test"));
         builder.Services.AddSingleton(collection);
         return builder;
     }
