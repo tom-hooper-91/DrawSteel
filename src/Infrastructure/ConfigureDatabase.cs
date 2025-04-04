@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using System.Data;
+using Domain;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
@@ -7,13 +8,24 @@ namespace Infrastructure;
 
 public static class Extensions
 {
-    public static FunctionsApplicationBuilder ConfigureDatabase(this FunctionsApplicationBuilder builder)
+    public static FunctionsApplicationBuilder ConfigureDatabase(this FunctionsApplicationBuilder builder, string? connectionString)
     {
-        var client = new MongoClient("mongodb://root:example@mongodb:27017/");
-        var database = client.GetDatabase(DatabaseConstants.DrawSteel);
-        var collection = database.GetCollection<Character>(DatabaseConstants.Characters);
-        collection.InsertOne(new Character("Test"));
-        builder.Services.AddSingleton(collection);
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new NoNullAllowedException("MongoDB Connection String is not set");
+        }
+        
+        var client = new MongoClient(connectionString);
+        var collection = client.GetDatabase(DatabaseConstants.DrawSteel)
+            .GetCollection<Character>(DatabaseConstants.Characters);
+        const string name = "Frodo";
+        
+        if (!collection.Find(character => character.Name == name).Any())
+        {
+            collection.InsertOne(new Character(name));
+        }
+        
+        builder.Services.AddSingleton<IMongoClient>(client);
         return builder;
     }
 }
