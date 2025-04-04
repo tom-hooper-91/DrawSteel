@@ -3,7 +3,6 @@ An aspiring character builder application for the Draw Steel RPG.
 
 Built using dotnet with the following:
 - Function app in the `API` project
-- Web app in the `Web` project
 - Interaction Driven Design core application:
     - `Application`
     - `Domain`
@@ -18,10 +17,15 @@ Uses a `psakefile` for common commands.
 Invoke-Psake DockerRun
 ```
 
+### Run Unit and Integration Tests
+```
+Invoke-Psake Test
+```
+
 ## Infra
 Built for Azure Container Apps and managed via Terraform through the `infra` directory.
 
-### Apply infrastrucure
+### Apply infrastructure
 ```
 Invoke-Psake ApplyInfra
 ```
@@ -29,7 +33,7 @@ Invoke-Psake ApplyInfra
 ```
 Invoke-Psake PlanInfra
 ```
-### Destory infrastructure
+### Destroy infrastructure
 ```
 Invoke-Psake DestroyInfra
 ```
