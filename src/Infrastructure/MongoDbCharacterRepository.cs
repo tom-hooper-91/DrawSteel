@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace Infrastructure;
 
-public class MongoDbCharacterRepository(MongoClient client) : ICharacterRepository
+public class MongoDbCharacterRepository(IMongoClient client) : ICharacterRepository
 {
     public async Task<CharacterId> Add(Character character)
     {

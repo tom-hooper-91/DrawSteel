@@ -10,6 +10,7 @@
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - AZURE_FUNCTIONS_ENVIRONMENT=Development
+      - DOTNET_ENVIRONMENT=Development
       - AzureWebJobsSecretStorageType=Files
       - FUNCTIONS_SECRETS_PATH=/etc/secrets
     configs:

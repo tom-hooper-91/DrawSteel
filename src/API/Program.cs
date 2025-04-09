@@ -6,7 +6,6 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Driver;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -22,16 +21,16 @@ builder.Services.AddScoped<ICreateCharacter, CreateCharacter>()
 // System.InvalidOperationException: Configuration is missing the 'HostEndpoint' information.
 // Please ensure an entry with the key 'Functions:Worker:HostEndpoint' is present in your configuration.
 
-// var configuration = new ConfigurationBuilder()
-//     .SetBasePath(Directory.GetCurrentDirectory())
-//     .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-//     .AddEnvironmentVariables()
-//     .Build();
-//
-// builder.ConfigureDatabase(configuration.GetConnectionString("MongoDB") ??
-//                             Environment.GetEnvironmentVariable("MongoDBConnectionString"));
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .Build();
 
-builder.ConfigureDatabase("mongodb://root:example@mongodb:27017/");
+builder.ConfigureDatabase(configuration.GetConnectionString("MongoDB") ??
+                            Environment.GetEnvironmentVariable("MongoDBConnectionString"));
+
+// builder.ConfigureDatabase("mongodb://root:example@mongodb:27017/");
 
 // Application Insights isn't enabled by default. See https://aka.ms/AAt8mw4.
 // builder.Services
