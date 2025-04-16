@@ -6,5 +6,5 @@ POST {{baseUrl}}/api/characters?code=test
 Content-Type: application/json
 
 {
-    "name": "Test"
+    "name": "Frodo"
 }

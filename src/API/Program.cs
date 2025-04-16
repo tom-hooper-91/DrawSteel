@@ -27,10 +27,7 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
-builder.ConfigureDatabase(configuration.GetConnectionString("MongoDB") ??
-                            Environment.GetEnvironmentVariable("MongoDBConnectionString"));
-
-// builder.ConfigureDatabase("mongodb://root:example@mongodb:27017/");
+builder.ConfigureDatabase(configuration.GetConnectionString("MongoDB"));
 
 // Application Insights isn't enabled by default. See https://aka.ms/AAt8mw4.
 // builder.Services
