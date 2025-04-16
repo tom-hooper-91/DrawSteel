@@ -51,6 +51,11 @@ ingress {
     value = data.azurerm_key_vault_secret.dockerhub_token.value
   }
 
+  secret {
+    name = "mongodb-connection-string"
+    value = azurerm_cosmosdb_account.main.primary_mongodb_connection_string
+  }
+
   lifecycle {
     ignore_changes = [
       template[0].container[0].image
