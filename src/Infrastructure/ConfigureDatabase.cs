@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Security.Authentication;
 using Domain;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,15 @@ public static class Extensions
             throw new NoNullAllowedException("MongoDB Connection String is not set");
         }
         
-        var client = new MongoClient(connectionString);
+        var settings = MongoClientSettings.FromUrl(
+            new MongoUrl(connectionString)
+        );
+        
+        settings.SslSettings = 
+            new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };
+        
+        var client = new MongoClient(settings);
+        
         var collection = client.GetDatabase(DatabaseConstants.DrawSteel)
             .GetCollection<Character>(DatabaseConstants.Characters);
         const string name = "Frodo";

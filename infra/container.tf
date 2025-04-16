@@ -37,6 +37,11 @@ ingress {
       image  = "thooper91/draw-steel-api:latest"
       cpu    = 0.25
       memory = "0.5Gi"
+
+      env {
+        name       = "MONGODB_CONNECTION_STRING"
+        secret_name = "mongodb-connection-string"
+      }
     }
   }
 
