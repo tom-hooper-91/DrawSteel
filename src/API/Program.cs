@@ -16,11 +16,6 @@ builder.Services.AddScoped<ICreateCharacter, CreateCharacter>()
     .AddScoped<ISaveCharacter, SaveCharacter>()
     .AddScoped<ICharacterRepository, MongoDbCharacterRepository>();
 
-// This code successfully pulls the connection string from local.settings.json
-// but it completely breaks the function builder for some reason:
-// System.InvalidOperationException: Configuration is missing the 'HostEndpoint' information.
-// Please ensure an entry with the key 'Functions:Worker:HostEndpoint' is present in your configuration.
-
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)

@@ -6,18 +6,17 @@ namespace Infrastructure;
 
 public class MongoDbCharacterRepository(IMongoClient client) : ICharacterRepository
 {
+    private IMongoCollection<Character> Characters { get; } = client.GetDatabase(DatabaseConstants.DrawSteel)
+        .GetCollection<Character>(DatabaseConstants.Characters);
+
     public async Task<CharacterId> Add(Character character)
     {
-        var characters = client.GetDatabase(DatabaseConstants.DrawSteel)
-        .GetCollection<Character>(DatabaseConstants.Characters);
-        await characters.InsertOneAsync(character);
+        await Characters.InsertOneAsync(character);
         return character.Id;
     }
 
     public async Task<Character> Get(CharacterId id)
     {
-        var characters = client.GetDatabase(DatabaseConstants.DrawSteel)
-            .GetCollection<Character>(DatabaseConstants.Characters);
-        return await characters.Find(character => character.Id == id).SingleOrDefaultAsync();
+        return await Characters.Find(character => character.Id == id).SingleOrDefaultAsync();
     }
 }
