@@ -11,7 +11,7 @@ public class Characters(ICreateCharacter createCharacter)
 {
     
     [Function("characters")]
-    public async Task<IActionResult> Create([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req)
+    public async Task<IActionResult> Create([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
     {
         var jsonString = await new StreamReader(req.Body).ReadToEndAsync();
         var command = JsonSerializer.Deserialize<CreateCharacterCommand>(jsonString, new JsonSerializerOptions{PropertyNameCaseInsensitive = true});
