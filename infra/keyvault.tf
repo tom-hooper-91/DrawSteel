@@ -35,6 +35,24 @@ resource "azurerm_key_vault_access_policy" "user" {
         "Restore",
         "Set"
   ]
+  key_permissions = [
+        "Backup",
+        "Create",
+        "Decrypt",
+        "Delete",
+        "Encrypt",
+        "Get",
+        "Import",
+        "List",
+        "Purge",
+        "Recover",
+        "Restore",
+        "Sign",
+        "UnwrapKey",
+        "Update",
+        "Verify",
+        "WrapKey"
+  ]
 }
 
 resource "azurerm_key_vault_access_policy" "container_app" {
