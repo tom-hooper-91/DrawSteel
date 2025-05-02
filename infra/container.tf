@@ -11,7 +11,7 @@ resource "azurerm_log_analytics_workspace" "main" {
 }
 
 resource "azurerm_container_app_environment" "main" {
-  name                       = "Draw-Steel"
+  name                       = local.common_app_name
   location                   = azurerm_resource_group.main.location
   resource_group_name        = azurerm_resource_group.main.name
   log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
@@ -57,6 +57,39 @@ ingress {
         name  = "AZURE_FUNCTIONS_ENVIRONMENT"
         value = "Production"
       }
+
+      env {
+        name  = "AZURE_FUNCTION_MANAGED_IDENTITY"
+        value = "true"
+      }
+
+      env {
+        name  = "WEBSITE_LOAD_USER_PROFILE"
+        value = "1"
+      }
+      env {
+        name  = "AzureWebJobsStorage__accountName"
+        value = azurerm_storage_account.main.name
+      }
+      env {
+        name  = "AZURE_TENANT_ID"
+        value = data.azurerm_client_config.current.tenant_id
+      }
+
+      env {
+        name  = "FUNCTIONS_EXTENSION_VERSION"
+        value = "~4"
+      }
+
+      env {
+        name  = "FUNCTIONS_WORKER_RUNTIME"
+        value = "dotnet-isolated"  # Adjust based on your runtime (.NET isolated, node, etc.)
+      }
+
+      env {
+        name  = "APPLICATIONINSIGHTS_CONNECTION_STRING"
+        value = azurerm_application_insights.app.connection_string
+      }
     }
   }
 
@@ -85,4 +118,11 @@ ingress {
   identity {
     type = "SystemAssigned"
   }
+}
+
+resource "azurerm_application_insights" "app" {
+  name                = "${local.common_app_name}"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  application_type    = "web"
 }

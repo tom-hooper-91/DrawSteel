@@ -18,6 +18,11 @@ resource "azurerm_key_vault" "main" {
   purge_protection_enabled    = true
 
   sku_name = "standard"
+  
+  network_acls {
+    bypass                     = "AzureServices"
+    default_action             = "Allow"  # Set to "Deny" for production with appropriate IP rules
+  }
 }
 
 resource "azurerm_key_vault_access_policy" "user" {

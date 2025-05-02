@@ -15,3 +15,15 @@ resource "azurerm_storage_container" "terraform_state" {
   storage_account_id    = azurerm_storage_account.main.id
   container_access_type = "private"
 }
+
+resource "azurerm_role_assignment" "function_storage_access" {
+  scope                = azurerm_storage_account.main.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_container_app.main.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "function_storage_queue" {
+  scope                = azurerm_storage_account.main.id
+  role_definition_name = "Storage Queue Data Contributor"
+  principal_id         = azurerm_container_app.main.identity[0].principal_id
+}
