@@ -1,4 +1,4 @@
-﻿@baseUrl = http://localhost:5000
+﻿@baseUrl = https://draw-steel.livelysand-b57a5d8a.westeurope.azurecontainerapps.io
 
 GET {{baseUrl}}/api/healthcheck
 ###

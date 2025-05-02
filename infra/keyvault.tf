@@ -2,6 +2,12 @@ resource "random_id" "key_vault" {
   byte_length = 6
 }
 
+resource "random_password" "function_key" {
+  length           = 32
+  special          = true
+  override_special = "!@#$%&*()-_=+[]{}<>:?"
+}
+
 resource "azurerm_key_vault" "main" {
   name                        = "drawsteel${random_id.key_vault.hex}"
   location                    = azurerm_resource_group.main.location
@@ -40,4 +46,10 @@ resource "azurerm_key_vault_access_policy" "container_app" {
         "Get",
         "List"
   ]
+}
+
+resource "azurerm_key_vault_secret" "function_key" {
+  name         = "function-key"
+  value        = random_password.function_key.result
+  key_vault_id = azurerm_key_vault.main.id
 }

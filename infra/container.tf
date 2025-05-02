@@ -42,6 +42,11 @@ ingress {
         name       = "MONGODB_CONNECTION_STRING"
         secret_name = "mongodb-connection-string"
       }
+
+      env {
+        name  = "FUNCTIONS_AUTHORIZATION_KEY"
+        secret_name = "function-key"
+      }
     }
   }
 
@@ -59,6 +64,11 @@ ingress {
   secret {
     name = "mongodb-connection-string"
     value = azurerm_cosmosdb_account.main.primary_mongodb_connection_string
+  }
+
+  secret {
+    name = "function-key"
+    value = azurerm_key_vault_secret.function_key.value
   }
 
   lifecycle {
