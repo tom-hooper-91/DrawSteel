@@ -32,12 +32,6 @@ resource "github_actions_secret" "azure_tenant_id" {
   plaintext_value  = azuread_service_principal.github_actions.application_tenant_id
 }
 
-resource "github_actions_secret" "key_vault_uri" {
-  repository = local.repo_name
-  secret_name = "KEYVAULT_URI"
-  plaintext_value = azurerm_key_vault.main.vault_uri
-}
-
 resource "github_actions_variable" "container_app_name" {
     repository       = local.repo_name
     variable_name    = "CONTAINER_APP_NAME"
