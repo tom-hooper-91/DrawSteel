@@ -1,4 +1,6 @@
-﻿GET {{baseUrl}}/api/healthcheck
+﻿@baseUrl = http://localhost:5000
+
+GET {{baseUrl}}/api/healthcheck
 ###
 GET {{baseUrl}}/api/ping?code=test
 ###
@@ -6,5 +8,5 @@ POST {{baseUrl}}/api/characters?code=test
 Content-Type: application/json
 
 {
-    "name": "Frodo"
+    "name": "Sam"
 }

@@ -5,6 +5,7 @@ resource "azurerm_cosmosdb_account" "main" {
   offer_type          = "Standard"
   kind                = "MongoDB"
   free_tier_enabled = true
+  mongo_server_version = "4.0"
 
 #   capabilities {
 #     name = "EnableAggregationPipeline"
@@ -14,22 +15,17 @@ resource "azurerm_cosmosdb_account" "main" {
 #     name = "mongoEnableDocLevelTTL"
 #   }
 
-#   capabilities {
-#     name = "MongoDBv3.4"
-#   }
+  capabilities {
+    name = "MongoDBv3.4"
+  }
 
-#   capabilities {
-#     name = "EnableMongo"
-#   }
+  capabilities {
+    name = "EnableMongo"
+  }
 
   consistency_policy {
     consistency_level       = "Session"
   }
-
-#   geo_location {
-#     location          = "eastus"
-#     failover_priority = 1
-#   }
 
   geo_location {
     location          = "westus"
