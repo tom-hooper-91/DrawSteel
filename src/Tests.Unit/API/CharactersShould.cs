@@ -27,7 +27,7 @@ public class CharactersShould
     {
         var command = new CreateCharacterCommand(characterName);
         var fakeRequest = A.Fake<HttpRequest>();
-        fakeRequest.Body = new StringContent(JsonSerializer.Serialize(new { Name = characterName })).ReadAsStream();
+        fakeRequest.Body = await new StringContent(JsonSerializer.Serialize(new { Name = characterName })).ReadAsStreamAsync();
         var expectedCharacterId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => _createCharacterAction.Execute(command)).Returns(expectedCharacterId);
 

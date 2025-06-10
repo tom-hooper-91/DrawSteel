@@ -1,4 +1,4 @@
-resource_group_name  = "draw-steel"
+resource_group_name  = "draw-steel-state"
 storage_account_name = "drawsteelea6e31c7d564"
 container_name       = "tfstate"
 key                  = "terraform.tfstate"
