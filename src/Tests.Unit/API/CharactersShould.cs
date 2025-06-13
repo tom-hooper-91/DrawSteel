@@ -26,12 +26,12 @@ public class CharactersShould
     public async Task Call_CreateCharacter_action_on_post(string characterName)
     {
         var command = new CreateCharacterCommand(characterName);
-        var fakeRequest = A.Fake<HttpRequest>();
-        fakeRequest.Body = await new StringContent(JsonSerializer.Serialize(new { Name = characterName })).ReadAsStreamAsync();
+        // var fakeRequest = A.Fake<HttpRequest>();
+        // fakeRequest.Body = await new StringContent(JsonSerializer.Serialize(new { Name = characterName })).ReadAsStreamAsync();
         var expectedCharacterId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => _createCharacterAction.Execute(command)).Returns(expectedCharacterId);
 
-        var response = await _createCharacterApi.Create(fakeRequest) as OkObjectResult;
+        var response = await _createCharacterApi.Create(command) as OkObjectResult;
         var jsonSerializerOptions = new JsonSerializerOptions{PropertyNameCaseInsensitive = true};
         var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!, jsonSerializerOptions);
 
