@@ -2,5 +2,5 @@
 
 public interface ICharacterFactory
 {
-    Character Create(CreateCharacterCommand command);
+    Character Create(CreateCharacterCommand newCharacter);
 }

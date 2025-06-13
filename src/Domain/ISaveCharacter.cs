@@ -2,5 +2,5 @@
 
 public interface ISaveCharacter
 {
-    Task<CharacterId> Save(Character character);
+    Task<CharacterId> This(Character character);
 }

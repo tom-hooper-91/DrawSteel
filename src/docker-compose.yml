@@ -6,16 +6,12 @@
       context: .
       dockerfile: API/Dockerfile
     ports:
-      - 5000:80
+      - "5000:8080"
+      - "5001:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - AZURE_FUNCTIONS_ENVIRONMENT=Development
       - DOTNET_ENVIRONMENT=Development
-      - AzureWebJobsSecretStorageType=Files
-      - FUNCTIONS_SECRETS_PATH=/etc/secrets
-    configs:
-      - source: function-host-secrets
-        target: /etc/secrets/host.json
     depends_on:
       - mongodb
 
@@ -43,7 +39,3 @@
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
       ME_CONFIG_BASICAUTH: false
-
-configs:
-  function-host-secrets:
-    file: ./API/test-keys.json
