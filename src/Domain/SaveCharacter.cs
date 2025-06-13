@@ -2,10 +2,10 @@
 
 namespace Domain;
 
-public class SaveCharacter(ICharacterRepository characterRepository) : ISaveCharacter
+public class SaveCharacter(ICharacterRepository repository) : ISaveCharacter
 {
-    public async Task<CharacterId> Save(Character character)
+    public async Task<CharacterId> This(Character character)
     {
-        return await characterRepository.Add(character);
+        return await repository.Add(character);
     }
 }

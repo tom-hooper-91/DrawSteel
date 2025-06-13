@@ -2,8 +2,8 @@
 
 public class CharacterFactory : ICharacterFactory
 {
-    public Character Create(CreateCharacterCommand command)
+    public Character Create(CreateCharacterCommand newCharacter)
     {
-        return new Character(command.Name);
+        return new Character(newCharacter.Name);
     }
 }

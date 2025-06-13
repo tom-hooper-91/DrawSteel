@@ -27,11 +27,11 @@ public static class Extensions
         
         var collection = client.GetDatabase(DatabaseConstants.DrawSteel)
             .GetCollection<Character>(DatabaseConstants.Characters);
-        const string name = "Frodo";
+        const string frodo = "Frodo";
         
-        if (!collection.Find(character => character.Name == name).Any())
+        if (!collection.Find(character => character.Name == frodo).Any())
         {
-            collection.InsertOne(new Character(name));
+            collection.InsertOne(new Character(frodo));
         }
         
         builder.Services.AddSingleton<IMongoClient>(client);

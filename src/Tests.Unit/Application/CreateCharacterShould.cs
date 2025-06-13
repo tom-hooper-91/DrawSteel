@@ -8,37 +8,38 @@ namespace Tests.Application;
 public class CreateCharacterShould
 {
     private CreateCharacter _createCharacter = null!;
-    private ICharacterFactory _characterFactory;
-    private ISaveCharacter _saveCharacter;
+    private ICharacterFactory _factory;
+    private ISaveCharacter _save;
 
     [SetUp]
     public void Setup()
     {
-        _characterFactory = A.Fake<ICharacterFactory>();
-        _saveCharacter = A.Fake<ISaveCharacter>();
-        _createCharacter = new CreateCharacter(_characterFactory, _saveCharacter);
+        _factory = A.Fake<ICharacterFactory>();
+        _save = A.Fake<ISaveCharacter>();
+        _createCharacter = new CreateCharacter(_factory, _save);
     }
 
     [TestCase("Frodo")]
     [TestCase("Sam")]
     public void Call_CharacterFactory(string name)
     {
-        var command = new CreateCharacterCommand(name);
+        var newCharacter = new CreateCharacterCommand(name);
 
-        _createCharacter.Execute(command);
+        _ = _createCharacter.Execute(newCharacter);
 
-        A.CallTo(() => _characterFactory.Create(command)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _factory.Create(newCharacter)).MustHaveHappenedOnceExactly();
     }
 
-    [Test]
-    public void Call_SaveCharacter()
+    [TestCase("Frodo")]
+    [TestCase("Sam")]
+    public void Call_SaveCharacter(string name)
     {
-        var command = new CreateCharacterCommand("Frodo");
-        var frodo = new Character(command.Name);
-        A.CallTo(() => _characterFactory.Create(command)).Returns(frodo);
+        var newCharacter = new CreateCharacterCommand(name);
+        var character = new Character(newCharacter.Name);
+        A.CallTo(() => _factory.Create(newCharacter)).Returns(character);
 
-        _createCharacter.Execute(command);
+        _ = _createCharacter.Execute(newCharacter);
 
-        A.CallTo(() => _saveCharacter.Save(frodo)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _save.This(character)).MustHaveHappenedOnceExactly();
     }
 }

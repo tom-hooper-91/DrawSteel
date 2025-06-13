@@ -10,8 +10,8 @@ public class CharacterFactoryShould
     public void Return_a_character(string name)
     {
         var factory = new CharacterFactory();
-        var command = new CreateCharacterCommand(name);
+        var newCharacter = new CreateCharacterCommand(name);
         
-        Assert.That(factory.Create(command).Name, Is.EqualTo(name));
+        Assert.That(factory.Create(newCharacter).Name, Is.EqualTo(name));
     }
 }

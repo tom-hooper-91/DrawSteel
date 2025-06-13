@@ -7,15 +7,16 @@ namespace Tests.Domain;
 [TestFixture]
 public class SaveCharacterShould
 {
-    [Test]
-    public void Call_Character_Repository()
+    [TestCase("Frodo")]
+    [TestCase("Sam")]
+    public void Call_Character_Repository(string name)
     {
-        var characterRepository = A.Fake<ICharacterRepository>();
-        var saveCharacter = new SaveCharacter(characterRepository);
-        var frodo = new Character("Frodo");
+        var repository = A.Fake<ICharacterRepository>();
+        var save = new SaveCharacter(repository);
+        var character = new Character(name);
         
-        saveCharacter.Save(frodo);
+        _ = save.This(character);
 
-        A.CallTo(() => characterRepository.Add(frodo)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => repository.Add(character)).MustHaveHappenedOnceExactly();
     }
 }
