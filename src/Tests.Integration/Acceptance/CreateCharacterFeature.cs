@@ -3,6 +3,7 @@ using System.Text.Json;
 using API;
 using Application;
 using Domain;
+using FakeItEasy;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,18 +18,18 @@ public class CreateCharacterFeature
         var factory = new CharacterFactory();
         var repository = new MongoDbCharacterRepository(Fixture.Client);
         var action = new CreateCharacter(factory, new SaveCharacter(repository));
-        var api = new Characters(action);
-        var character = new CreateCharacterCommand("Frodo");
+        var api = new Characters(action, A.Fake<IFetchCharacter>());
+        var frodo = new CreateCharacterCommand("Frodo");
         
-        var response = await api.Create(character) as OkObjectResult;
-        var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
-        var characterFromDatabase = await repository.Get(characterId!);
+        var response = await api.Post(frodo) as OkObjectResult;
+        var frodoId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
+        var savedCharacter = await repository.Get(frodoId!);
         
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.TypeOf<OkObjectResult>());
-            Assert.That(characterId, Is.Not.Null);
-            Assert.That(characterFromDatabase.Name, Is.EqualTo(character.Name));
+            Assert.That(frodoId, Is.Not.Null);
+            Assert.That(savedCharacter.Name, Is.EqualTo(frodo.Name));
         });
     }
 }

@@ -23,16 +23,16 @@ public class CharactersShould
 
     [TestCase("Frodo")]
     [TestCase("Sam")]
-    public async Task Call_CreateCharacter_action_on_post(string name)
+    public async Task Return_serialised_characterId_on_post(string name)
     {
         var newCharacter = new CreateCharacterCommand(name);
         var expectedCharacterId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => _createCharacter.Execute(newCharacter)).Returns(expectedCharacterId);
 
-        var response = await _api.Create(newCharacter) as OkObjectResult;
+        var response = await _api.Post(newCharacter) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
 
-        A.CallTo(() => _createCharacter.Execute(newCharacter)).MustHaveHappened();
+        A.CallTo(() => _createCharacter.Execute(newCharacter)).MustHaveHappenedOnceExactly();
         Assert.That(characterId, Is.EqualTo(expectedCharacterId));
     }
 }
