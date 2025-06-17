@@ -1,9 +1,14 @@
-﻿namespace Domain;
+﻿using Domain.Repositories;
 
-public class CharacterService : ICharacterService
+namespace Domain;
+
+public class CharacterService(ICharacterRepository repository) : ICharacterService
 {
     public Task<CharacterId> Create(CreateCharacterCommand character)
     {
-        throw new NotImplementedException();
+        var newCharacter = new Character(character.Name);
+        repository.Add(newCharacter);
+        
+        return Task.FromResult(newCharacter.Id);
     }
 }
