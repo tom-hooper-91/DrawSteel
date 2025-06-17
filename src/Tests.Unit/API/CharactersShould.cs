@@ -29,7 +29,7 @@ public class CharactersShould
         var expectedCharacterId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => _createCharacter.Execute(newCharacter)).Returns(expectedCharacterId);
 
-        var response = await _api.Post(newCharacter) as OkObjectResult;
+        var response = await _api.Create(newCharacter) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
 
         A.CallTo(() => _createCharacter.Execute(newCharacter)).MustHaveHappenedOnceExactly();

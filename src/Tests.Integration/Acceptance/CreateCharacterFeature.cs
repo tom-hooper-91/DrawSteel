@@ -1,9 +1,7 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using API;
 using Application;
 using Domain;
-using FakeItEasy;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +13,13 @@ public class CreateCharacterFeature
     [Test]
     public async Task Create_a_character_in_the_database_and_respond_with_the_characters_id()
     {
-        var factory = new CharacterFactory();
         var repository = new MongoDbCharacterRepository(Fixture.Client);
-        var action = new CreateCharacter(factory, new SaveCharacter(repository));
-        var api = new Characters(action, A.Fake<IFetchCharacter>());
+        var characterService = new CharacterService();
+        var action = new CreateCharacter(characterService);
+        var api = new Characters(action);
         var frodo = new CreateCharacterCommand("Frodo");
         
-        var response = await api.Post(frodo) as OkObjectResult;
+        var response = await api.Create(frodo) as OkObjectResult;
         var frodoId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
         var savedCharacter = await repository.Get(frodoId!);
         

@@ -7,39 +7,19 @@ namespace Tests.Application;
 [TestFixture]
 public class CreateCharacterShould
 {
-    private CreateCharacter _createCharacter = null!;
-    private ICharacterFactory _factory;
-    private ISaveCharacter _save;
-
-    [SetUp]
-    public void Setup()
-    {
-        _factory = A.Fake<ICharacterFactory>();
-        _save = A.Fake<ISaveCharacter>();
-        _createCharacter = new CreateCharacter(_factory, _save);
-    }
-
     [TestCase("Frodo")]
     [TestCase("Sam")]
-    public void Call_CharacterFactory(string name)
+    public async Task Call_CharacterService_Create_and_return_CharacterID(string name)
     {
-        var newCharacter = new CreateCharacterCommand(name);
-
-        _ = _createCharacter.Execute(newCharacter);
-
-        A.CallTo(() => _factory.Create(newCharacter)).MustHaveHappenedOnceExactly();
-    }
-
-    [TestCase("Frodo")]
-    [TestCase("Sam")]
-    public void Call_SaveCharacter(string name)
-    {
-        var newCharacter = new CreateCharacterCommand(name);
-        var character = new Character(newCharacter.Name);
-        A.CallTo(() => _factory.Create(newCharacter)).Returns(character);
-
-        _ = _createCharacter.Execute(newCharacter);
-
-        A.CallTo(() => _save.This(character)).MustHaveHappenedOnceExactly();
+        var character = new CreateCharacterCommand(name);
+        var service = A.Fake<ICharacterService>();
+        var createCharacter = new CreateCharacter(service);
+        var expectedId = new CharacterId(Guid.NewGuid());
+        A.CallTo(() => service.Create(A<CreateCharacterCommand>._)).Returns(expectedId);
+        
+        var characterId = await createCharacter.Execute(character);
+        
+        A.CallTo(() => service.Create(character)).MustHaveHappenedOnceExactly();
+        Assert.That(characterId, Is.EqualTo(expectedId));
     }
 }
