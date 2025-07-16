@@ -11,31 +11,28 @@ namespace Tests.API;
 [TestFixture]
 public class CharactersShould
 {
-    private Characters _createCharacterApi;
-    private ICreateCharacter _createCharacterAction;
+    private Characters _api;
+    private ICreateCharacter _createCharacter;
 
     [SetUp]
     public void Setup()
     {
-        _createCharacterAction = A.Fake<ICreateCharacter>();
-        _createCharacterApi = new Characters(_createCharacterAction);
+        _createCharacter = A.Fake<ICreateCharacter>();
+        _api = new Characters(_createCharacter);
     }
 
     [TestCase("Frodo")]
     [TestCase("Sam")]
-    public async Task Call_CreateCharacter_action_on_post(string characterName)
+    public async Task Return_serialised_characterId_on_post(string name)
     {
-        var command = new CreateCharacterCommand(characterName);
-        var fakeRequest = A.Fake<HttpRequest>();
-        fakeRequest.Body = await new StringContent(JsonSerializer.Serialize(new { Name = characterName })).ReadAsStreamAsync();
+        var newCharacter = new CreateCharacterCommand(name);
         var expectedCharacterId = new CharacterId(Guid.NewGuid());
-        A.CallTo(() => _createCharacterAction.Execute(command)).Returns(expectedCharacterId);
+        A.CallTo(() => _createCharacter.Execute(newCharacter)).Returns(expectedCharacterId);
 
-        var response = await _createCharacterApi.Create(fakeRequest) as OkObjectResult;
-        var jsonSerializerOptions = new JsonSerializerOptions{PropertyNameCaseInsensitive = true};
-        var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!, jsonSerializerOptions);
+        var response = await _api.Create(newCharacter) as OkObjectResult;
+        var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
 
-        A.CallTo(() => _createCharacterAction.Execute(command)).MustHaveHappened();
+        A.CallTo(() => _createCharacter.Execute(newCharacter)).MustHaveHappenedOnceExactly();
         Assert.That(characterId, Is.EqualTo(expectedCharacterId));
     }
 }

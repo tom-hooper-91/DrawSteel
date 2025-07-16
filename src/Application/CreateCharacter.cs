@@ -2,11 +2,10 @@
 
 namespace Application;
 
-public class CreateCharacter(ICharacterFactory characterFactory, ISaveCharacter saveCharacter) : ICreateCharacter
+public class CreateCharacter(ICharacterService characterService) : ICreateCharacter
 {
     public async Task<CharacterId> Execute(CreateCharacterCommand command)
     {
-        var character = characterFactory.Create(command);
-        return await saveCharacter.Save(character);
+        return await characterService.Create(command);
     }
 }

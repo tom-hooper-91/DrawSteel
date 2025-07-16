@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Security.Authentication;
 using Domain;
-using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 
@@ -9,29 +9,29 @@ namespace Infrastructure;
 
 public static class Extensions
 {
-    public static FunctionsApplicationBuilder ConfigureDatabase(this FunctionsApplicationBuilder builder, string? connectionString)
+    public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder, string? connectionString)
     {
         if (string.IsNullOrEmpty(connectionString))
         {
             throw new NoNullAllowedException("MongoDB Connection String is not set");
         }
         
-        var settings = MongoClientSettings.FromUrl(
-            new MongoUrl(connectionString)
-        );
+        // var settings = MongoClientSettings.FromUrl(
+        //     new MongoUrl(connectionString)
+        // );
+        //
+        // settings.SslSettings = 
+        //     new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };
         
-        settings.SslSettings = 
-            new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };
-        
-        var client = new MongoClient(settings);
+        var client = new MongoClient(connectionString);
         
         var collection = client.GetDatabase(DatabaseConstants.DrawSteel)
             .GetCollection<Character>(DatabaseConstants.Characters);
-        const string name = "Frodo";
+        const string frodo = "Frodo";
         
-        if (!collection.Find(character => character.Name == name).Any())
+        if (!collection.Find(character => character.Name == frodo).Any())
         {
-            collection.InsertOne(new Character(name));
+            collection.InsertOne(new Character(new CharacterId(Guid.NewGuid()), frodo));
         }
         
         builder.Services.AddSingleton<IMongoClient>(client);
