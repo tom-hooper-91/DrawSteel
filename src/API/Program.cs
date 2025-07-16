@@ -12,8 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddScoped<ICreateCharacter, CreateCharacter>()
-    .AddScoped<ICharacterFactory, CharacterFactory>()
-    .AddScoped<ISaveCharacter, SaveCharacter>()
+    .AddScoped<ICharacterService, CharacterService>()
     .AddScoped<ICharacterRepository, MongoDbCharacterRepository>()
     .AddControllers();
 

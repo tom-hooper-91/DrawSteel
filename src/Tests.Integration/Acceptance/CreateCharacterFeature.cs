@@ -14,8 +14,8 @@ public class CreateCharacterFeature
     public async Task Create_a_character_in_the_database_and_respond_with_the_characters_id()
     {
         var repository = new MongoDbCharacterRepository(Fixture.Client);
-        var characterService = new CharacterService();
-        var action = new CreateCharacter(characterService);
+        var service = new CharacterService(repository);
+        var action = new CreateCharacter(service);
         var api = new Characters(action);
         var frodo = new CreateCharacterCommand("Frodo");
         
@@ -27,6 +27,7 @@ public class CreateCharacterFeature
         {
             Assert.That(response, Is.TypeOf<OkObjectResult>());
             Assert.That(frodoId, Is.Not.Null);
+            Assert.That(savedCharacter.Id, Is.EqualTo(frodoId));
             Assert.That(savedCharacter.Name, Is.EqualTo(frodo.Name));
         });
     }

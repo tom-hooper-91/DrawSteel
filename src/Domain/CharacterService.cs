@@ -4,11 +4,11 @@ namespace Domain;
 
 public class CharacterService(ICharacterRepository repository) : ICharacterService
 {
-    public Task<CharacterId> Create(CreateCharacterCommand character)
+    public async Task<CharacterId> Create(CreateCharacterCommand character)
     {
-        var newCharacter = new Character(character.Name);
-        repository.Add(newCharacter);
+        var newCharacterId = new CharacterId(Guid.NewGuid());
+        var newCharacter = new Character(newCharacterId, character.Name);
         
-        return Task.FromResult(newCharacter.Id);
+        return await repository.Add(newCharacter);
     }
 }

@@ -31,7 +31,7 @@ public static class Extensions
         
         if (!collection.Find(character => character.Name == frodo).Any())
         {
-            collection.InsertOne(new Character(frodo));
+            collection.InsertOne(new Character(new CharacterId(Guid.NewGuid()), frodo));
         }
         
         builder.Services.AddSingleton<IMongoClient>(client);
