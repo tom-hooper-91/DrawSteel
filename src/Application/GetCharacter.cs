@@ -2,10 +2,10 @@
 
 namespace Application;
 
-public class GetCharacter : IGetCharacter
+public class GetCharacter(ICharacterService service) : IGetCharacter
 {
-    public Task<Character> Execute(CharacterId characterId)
+    public async Task<Character> Execute(CharacterId characterId)
     {
-        throw new NotImplementedException();
+        return await service.Get(characterId);
     }
 }

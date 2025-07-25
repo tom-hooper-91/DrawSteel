@@ -19,7 +19,7 @@ public class CharacterFeatures
         _repository = new MongoDbCharacterRepository(Fixture.Client);
         var service = new CharacterService(_repository);
         var create = new CreateCharacter(service);
-        var get = new GetCharacter();
+        var get = new GetCharacter(service);
         _api = new Characters(create, get);
     }
     
