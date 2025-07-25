@@ -13,12 +13,14 @@ public class CharactersShould
 {
     private Characters _api;
     private ICreateCharacter _createCharacter;
+    private IGetCharacter _getCharacter;
 
     [SetUp]
     public void Setup()
     {
         _createCharacter = A.Fake<ICreateCharacter>();
-        _api = new Characters(_createCharacter);
+        _getCharacter = A.Fake<IGetCharacter>();
+        _api = new Characters(_createCharacter, _getCharacter);
     }
 
     [TestCase("Frodo")]
@@ -34,5 +36,20 @@ public class CharactersShould
 
         A.CallTo(() => _createCharacter.Execute(newCharacter)).MustHaveHappenedOnceExactly();
         Assert.That(characterId, Is.EqualTo(expectedCharacterId));
+    }
+
+    
+    [TestCase("Frodo")]
+    [TestCase("Sam")]
+    public async Task Return_serialised_character_on_get(string name)
+    {
+        var existingCharacterId = new CharacterId(Guid.NewGuid());
+        var existingCharacter = new Character(existingCharacterId, name);
+        A.CallTo(() => _getCharacter.Execute(existingCharacterId)).Returns(existingCharacter);
+        
+        var response = await _api.Get(existingCharacterId) as OkObjectResult;
+        var returnedCharacter = JsonSerializer.Deserialize<Character>(response!.Value!.ToString()!);
+        
+        Assert.That(returnedCharacter, Is.EqualTo(existingCharacter));
     }
 }
