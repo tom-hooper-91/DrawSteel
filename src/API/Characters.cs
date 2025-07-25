@@ -17,11 +17,12 @@ public class Characters(ICreateCharacter createCharacter, IGetCharacter getChara
         return new OkObjectResult(JsonSerializer.Serialize(characterId));
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get(CharacterId characterId)
+    [HttpGet("{characterId}")]
+    public async Task<IActionResult> Get([FromRoute] string characterId) 
     {
-        var character = await getCharacter.Execute(characterId);
-        
+        var id = new CharacterId(new Guid(characterId));
+        var character = await getCharacter.Execute(id);
+            
         return new OkObjectResult(JsonSerializer.Serialize(character));
     }
 }

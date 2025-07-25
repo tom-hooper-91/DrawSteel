@@ -14,6 +14,7 @@ builder.Services
     .AddScoped<ICreateCharacter, CreateCharacter>()
     .AddScoped<ICharacterService, CharacterService>()
     .AddScoped<ICharacterRepository, MongoDbCharacterRepository>()
+    .AddScoped<IGetCharacter, GetCharacter>()
     .AddControllers();
 
 var configuration = new ConfigurationBuilder()

@@ -4,3 +4,11 @@ GET {{API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+POST https://draw-steel.purpleocean-74a498f8.westeurope.azurecontainerapps.io/api/characters
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Aaragorn"
+}

@@ -48,7 +48,7 @@ public class CharacterFeatures
         var existingCharacter = new Character(existingCharacterId, "Sam");
         await _repository.Add(existingCharacter);
         
-        var response = await _api.Get(existingCharacterId) as OkObjectResult;
+        var response = await _api.Get(existingCharacterId.ToString()) as OkObjectResult;
         var returnedCharacter = JsonSerializer.Deserialize<Character>(response!.Value!.ToString()!);
         
         Assert.Multiple(() =>

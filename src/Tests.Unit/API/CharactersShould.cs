@@ -47,7 +47,7 @@ public class CharactersShould
         var existingCharacter = new Character(existingCharacterId, name);
         A.CallTo(() => _getCharacter.Execute(existingCharacterId)).Returns(existingCharacter);
         
-        var response = await _api.Get(existingCharacterId) as OkObjectResult;
+        var response = await _api.Get(existingCharacterId.ToString()) as OkObjectResult;
         var returnedCharacter = JsonSerializer.Deserialize<Character>(response!.Value!.ToString()!);
         
         Assert.That(returnedCharacter, Is.EqualTo(existingCharacter));
