@@ -6,15 +6,15 @@ terraform {
       version = "4.14.0"
     }
     azuread = {
-      source = "hashicorp/azuread"
+      source  = "hashicorp/azuread"
       version = "3.0.1"
     }
     github = {
-      source = "integrations/github"
+      source  = "integrations/github"
       version = "6.3.1"
     }
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = "3.6.3"
     }
   }

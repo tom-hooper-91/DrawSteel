@@ -4,6 +4,7 @@ An aspiring character builder application for the Draw Steel RPG.
 Built using dotnet with the following:
 - Function app in the `API` project
 - Interaction Driven Design core application:
+    - `API`
     - `Application`
     - `Domain`
     - `Infrastructure`

@@ -1,19 +1,19 @@
 resource "azurerm_cosmosdb_account" "main" {
-  name                = local.common_app_name
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-  offer_type          = "Standard"
-  kind                = "MongoDB"
-  free_tier_enabled = true
+  name                 = local.common_app_name
+  location             = azurerm_resource_group.main.location
+  resource_group_name  = azurerm_resource_group.main.name
+  offer_type           = "Standard"
+  kind                 = "MongoDB"
+  free_tier_enabled    = true
   mongo_server_version = "4.0"
 
-#   capabilities {
-#     name = "EnableAggregationPipeline"
-#   }
+  #   capabilities {
+  #     name = "EnableAggregationPipeline"
+  #   }
 
-#   capabilities {
-#     name = "mongoEnableDocLevelTTL"
-#   }
+  #   capabilities {
+  #     name = "mongoEnableDocLevelTTL"
+  #   }
 
   capabilities {
     name = "MongoDBv3.4"
@@ -24,7 +24,7 @@ resource "azurerm_cosmosdb_account" "main" {
   }
 
   consistency_policy {
-    consistency_level       = "Session"
+    consistency_level = "Session"
   }
 
   geo_location {

@@ -6,7 +6,7 @@ resource "azuread_application_registration" "github_actions" {
 resource "azuread_service_principal" "github_actions" {
   client_id                    = azuread_application_registration.github_actions.client_id
   app_role_assignment_required = false
-  owners                       = [data.azuread_client_config.current.object_id]
+  owners                       = [data.azurerm_client_config.current.object_id]
 }
 
 resource "azuread_application_federated_identity_credential" "github_actions" {

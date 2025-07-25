@@ -15,7 +15,11 @@ Task Test {
     Exec { dotnet test } -workingDirectory $appDirectory
 }
 
-Task TerraformInit {
+Task TerraformFormat {
+    Exec { terraform fmt } -workingDirectory $infraDirectory
+}
+
+Task TerraformInit -depends TerraformFormat {
     Exec { terraform init -backend-config="$backendConfig" -upgrade -reconfigure } -workingDirectory $infraDirectory
 }
 
