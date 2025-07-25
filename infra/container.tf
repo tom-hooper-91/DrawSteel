@@ -1,5 +1,6 @@
 locals {
-  dockerhub_token_secret_name = "registryhubdockercom-thooper91"
+  dockerhub_token_secret_name            = "registryhubdockercom-thooper91"
+  mongo_db_connection_string_secret_name = "mongodb-connection-string"
 }
 
 resource "azurerm_log_analytics_workspace" "main" {
@@ -24,7 +25,7 @@ resource "azurerm_container_app" "main" {
   revision_mode                = "Single"
 
   ingress {
-    target_port      = 80
+    target_port      = 8080
     external_enabled = true
     traffic_weight {
       latest_revision = true
@@ -39,8 +40,8 @@ resource "azurerm_container_app" "main" {
       memory = "0.5Gi"
 
       env {
-        name  = "MONGODB_CONNECTION_STRING"
-        value = "ResourceId=${azurerm_cosmosdb_account.main.id};Database=${azurerm_cosmosdb_mongo_database.main.name};IdentityAuthType=AccessToken"
+        name        = "MONGODB_CONNECTION_STRING"
+        secret_name = local.mongo_db_connection_string_secret_name
       }
     }
   }
@@ -56,13 +57,14 @@ resource "azurerm_container_app" "main" {
     value = data.azurerm_key_vault_secret.dockerhub_token.value
   }
 
+  secret {
+    name  = local.mongo_db_connection_string_secret_name
+    value = azurerm_cosmosdb_account.main.primary_mongodb_connection_string
+  }
+
   lifecycle {
     ignore_changes = [
       template[0].container[0].image
     ]
-  }
-
-  identity {
-    type = "SystemAssigned"
   }
 }
