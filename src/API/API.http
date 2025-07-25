@@ -1,14 +1,13 @@
-@API_HostAddress = http://localhost:5085
+@characterId = b3369c20-1289-4466-a1c0-d581b2e7aef6
 
-GET {{API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
-
-POST https://draw-steel.purpleocean-74a498f8.westeurope.azurecontainerapps.io/api/characters
+POST {{HostAddress}}/api/characters
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "Aaragorn"
+  "name": "Gandalf"
 }
+
+###
+
+GET {{HostAddress}}/api/characters/{{characterId}}
