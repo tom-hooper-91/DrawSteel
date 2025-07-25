@@ -55,7 +55,7 @@ public class CharacterFeatures
         {
             Assert.That(response, Is.TypeOf<OkObjectResult>());
             Assert.That(returnedCharacter, Is.Not.Null);
-            Assert.That(returnedCharacter.Id, Is.EqualTo(existingCharacterId));
+            Assert.That(returnedCharacter!.Id, Is.EqualTo(existingCharacterId));
             Assert.That(returnedCharacter.Name, Is.EqualTo(existingCharacter.Name));
         });
     }

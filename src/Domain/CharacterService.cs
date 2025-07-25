@@ -12,8 +12,8 @@ public class CharacterService(ICharacterRepository repository) : ICharacterServi
         return await repository.Add(newCharacter);
     }
 
-    public Task<Character> Get(CharacterId characterId)
+    public async Task<Character> Get(CharacterId characterId)
     {
-        throw new NotImplementedException();
+        return await repository.Get(characterId);
     }
 }
