@@ -9,6 +9,10 @@ terraform {
       source  = "hashicorp/azuread"
       version = "3.0.1"
     }
+    auth0 = {
+      source  = "auth0/auth0"
+      version = "1.26.0"
+    }
     github = {
       source  = "integrations/github"
       version = "6.3.1"
@@ -28,6 +32,12 @@ provider "azurerm" {
 
 provider "azuread" {
   tenant_id = "367128d9-c2d4-4615-98a3-002700e530d3"
+}
+
+provider "auth0" {
+  domain        = data.azurerm_key_vault_secret.auth0_domain.value
+  client_id     = data.azurerm_key_vault_secret.auth0_client_id.value
+  client_secret = data.azurerm_key_vault_secret.auth0_client_secret.value
 }
 
 provider "github" {
