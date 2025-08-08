@@ -31,7 +31,7 @@ public class CharacterServiceShould
         Assert.That(characterId, Is.EqualTo(expectedId));
     }
 
-    
+
     [TestCase("Frodo")]
     [TestCase("Sam")]
     public async Task Get_a_Character_from_the_Repository_and_return_it(string name)
@@ -41,7 +41,7 @@ public class CharacterServiceShould
         A.CallTo(() => _repository.Get(characterId)).Returns(expectedCharacter);
 
         var character = await _service.Get(characterId);
-        
+
         Assert.That(character, Is.EqualTo(expectedCharacter));
     }
 }

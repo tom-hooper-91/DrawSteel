@@ -16,9 +16,9 @@ public class CreateCharacterShould
         var createCharacter = new CreateCharacter(service);
         var expectedId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => service.Create(A<CreateCharacterCommand>._)).Returns(expectedId);
-        
+
         var characterId = await createCharacter.Execute(character);
-        
+
         A.CallTo(() => service.Create(character)).MustHaveHappenedOnceExactly();
         Assert.That(characterId, Is.EqualTo(expectedId));
     }

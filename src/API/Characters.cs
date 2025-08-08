@@ -12,17 +12,26 @@ public class Characters(ICreateCharacter createCharacter, IGetCharacter getChara
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCharacterCommand command)
     {
-        var characterId = await createCharacter.Execute(command);
-        
-        return new OkObjectResult(JsonSerializer.Serialize(characterId));
+        try
+        {
+            var characterId = await createCharacter.Execute(command);
+            return new OkObjectResult(JsonSerializer.Serialize(characterId));
+        }
+        catch
+        {
+            return Problem();
+        }
     }
 
     [HttpGet("{characterId}")]
-    public async Task<IActionResult> Get([FromRoute] string characterId) 
+    public async Task<IActionResult> Get([FromRoute] string characterId)
     {
         var id = new CharacterId(new Guid(characterId));
         var character = await getCharacter.Execute(id);
-            
+
+        if (character is null)
+            return new NotFoundResult();
+
         return new OkObjectResult(JsonSerializer.Serialize(character));
     }
 }

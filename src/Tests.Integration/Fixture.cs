@@ -19,7 +19,7 @@ public class Fixture
         await _mongoDbContainer.StartAsync();
         Client = new MongoClient(_mongoDbContainer.GetConnectionString());
     }
-    
+
     [OneTimeTearDown]
     public async Task TearDown()
     {

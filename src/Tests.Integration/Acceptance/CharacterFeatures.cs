@@ -22,16 +22,16 @@ public class CharacterFeatures
         var get = new GetCharacter(service);
         _api = new Characters(create, get);
     }
-    
+
     [Test]
     public async Task Create_a_character_in_the_database_and_respond_with_the_characters_id()
     {
         var frodo = new CreateCharacterCommand("Frodo");
-        
+
         var response = await _api.Create(frodo) as OkObjectResult;
         var frodoId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
         var savedCharacter = await _repository.Get(frodoId!);
-        
+
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.TypeOf<OkObjectResult>());
@@ -40,17 +40,17 @@ public class CharacterFeatures
             Assert.That(savedCharacter.Name, Is.EqualTo(frodo.Name));
         });
     }
-    
+
     [Test]
     public async Task Respond_with_an_existing_character_from_the_database()
     {
         var existingCharacterId = new CharacterId(Guid.NewGuid());
         var existingCharacter = new Character(existingCharacterId, "Sam");
         await _repository.Add(existingCharacter);
-        
+
         var response = await _api.Get(existingCharacterId.ToString()) as OkObjectResult;
         var returnedCharacter = JsonSerializer.Deserialize<Character>(response!.Value!.ToString()!);
-        
+
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.TypeOf<OkObjectResult>());

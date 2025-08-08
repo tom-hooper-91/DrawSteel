@@ -1,6 +1,5 @@
 $infraDirectory = "$(Get-Location)/infra"
 $appDirectory = "$(Get-Location)/src"
-$tfVarsFile = "$infraDirectory/environment.tfvars"
 $backendConfig = "$infraDirectory/backend-config" 
 
 Task Run {
@@ -13,6 +12,10 @@ Task DockerRun {
 
 Task Test {
     Exec { dotnet test } -workingDirectory $appDirectory
+}
+
+Task Format {
+    Exec { dotnet format } -workingDirectory $appDirectory
 }
 
 Task TerraformFormat {

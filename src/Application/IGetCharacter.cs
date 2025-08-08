@@ -4,5 +4,5 @@ namespace Application;
 
 public interface IGetCharacter
 {
-    Task<Character> Execute(CharacterId characterId);
+    Task<Character?> Execute(CharacterId characterId);
 }

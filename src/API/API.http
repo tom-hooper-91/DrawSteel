@@ -1,4 +1,4 @@
-@characterId = b3369c20-1289-4466-a1c0-d581b2e7aef6
+@characterId = 7a56eb9b-b6f0-49b6-98c8-7504e2a4c9e7
 
 POST {{HostAddress}}/api/characters
 Content-Type: application/json

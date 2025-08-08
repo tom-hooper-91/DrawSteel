@@ -37,4 +37,5 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers().WithOpenApi();
+// app.UseExceptionHandler("/error");
 await app.RunAsync();
