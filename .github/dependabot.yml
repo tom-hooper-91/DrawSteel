@@ -4,15 +4,15 @@ updates:
     directory: "/src" # Location of package manifests
     schedule:
       interval: "weekly"
-- package-ecosystem: "terraform" # See documentation for possible values
+  - package-ecosystem: "terraform" # See documentation for possible values
     directory: "/infra" # Location of package manifests
     schedule:
       interval: "weekly"
-- package-ecosystem: "docker" # See documentation for possible values
+  - package-ecosystem: "docker" # See documentation for possible values
     directory: "/src" # Location of package manifests
     schedule:
       interval: "weekly"
-- package-ecosystem: "github-actions" # See documentation for possible values
+  - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
