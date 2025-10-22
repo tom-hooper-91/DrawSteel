@@ -7,7 +7,7 @@ terraform {
     }
     azuread = {
       source  = "hashicorp/azuread"
-      version = "3.0.1"
+      version = "3.6.0"
     }
     auth0 = {
       source  = "auth0/auth0"
