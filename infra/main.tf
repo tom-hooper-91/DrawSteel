@@ -11,7 +11,7 @@ terraform {
     }
     auth0 = {
       source  = "auth0/auth0"
-      version = "1.26.0"
+      version = "1.32.0"
     }
     github = {
       source  = "integrations/github"
