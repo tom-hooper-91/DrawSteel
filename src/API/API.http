@@ -11,3 +11,17 @@ Accept: application/json
 ###
 
 GET {{HostAddress}}/api/characters/{{characterId}}
+
+###
+
+PUT {{HostAddress}}/api/characters/{{characterId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Gandalf the White"
+}
+
+###
+
+DELETE {{HostAddress}}/api/characters/{{characterId}}
