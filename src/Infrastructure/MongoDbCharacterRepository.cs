@@ -20,7 +20,6 @@ public class MongoDbCharacterRepository(IMongoClient client) : ICharacterReposit
         return await Characters.Find(character => character.Id == id).SingleOrDefaultAsync();
     }
 
-    // T023: Implement Update method using ReplaceOneAsync
     public async Task<bool> Update(Character character)
     {
         var filter = Builders<Character>.Filter.Eq(c => c.Id, character.Id);

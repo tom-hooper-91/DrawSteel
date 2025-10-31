@@ -31,7 +31,6 @@ public class MongoDbCharacterRepositoryShould
         _repository = new MongoDbCharacterRepository(_client);
     }
 
-    // T011: Update returns true when character found
     [Test]
     public async Task Update_returns_true_when_character_found()
     {
@@ -51,7 +50,6 @@ public class MongoDbCharacterRepositoryShould
         Assert.That(result, Is.True);
     }
 
-    // T012: Update returns false when character not found
     [Test]
     public async Task Update_returns_false_when_character_not_found()
     {
@@ -71,7 +69,6 @@ public class MongoDbCharacterRepositoryShould
         Assert.That(result, Is.False);
     }
 
-    // T031: Delete returns true when character deleted
     [Test]
     public async Task Delete_returns_true_when_character_deleted()
     {
@@ -88,7 +85,6 @@ public class MongoDbCharacterRepositoryShould
         Assert.That(result, Is.True);
     }
 
-    // T032: Delete returns false when already deleted
     [Test]
     public async Task Delete_returns_false_when_already_deleted()
     {

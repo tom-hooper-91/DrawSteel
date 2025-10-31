@@ -7,7 +7,6 @@ namespace Tests.Application;
 [TestFixture]
 public class DeleteCharacterShould
 {
-    // T034: Delegate to character service
     [Test]
     public async Task Delegate_to_character_service()
     {
@@ -22,7 +21,6 @@ public class DeleteCharacterShould
         Assert.That(result, Is.True);
     }
 
-    // T035: Return false when service returns false
     [Test]
     public async Task Return_false_when_service_returns_false()
     {

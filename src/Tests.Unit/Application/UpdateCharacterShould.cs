@@ -7,7 +7,6 @@ namespace Tests.Application;
 [TestFixture]
 public class UpdateCharacterShould
 {
-    // T014: Delegate to character service
     [TestCase("Frodo")]
     [TestCase("Sam")]
     public async Task Delegate_to_character_service(string name)
@@ -25,7 +24,6 @@ public class UpdateCharacterShould
         Assert.That(result, Is.EqualTo(expectedCharacter));
     }
 
-    // T015: Return null when service returns null
     [Test]
     public async Task Return_null_when_service_returns_null()
     {
@@ -33,7 +31,7 @@ public class UpdateCharacterShould
         var command = new UpdateCharacterCommand(characterId, "New Name");
         var service = A.Fake<ICharacterService>();
         var updateCharacter = new UpdateCharacter(service);
-        A.CallTo(() => service.Update(A<UpdateCharacterCommand>._)).Returns(Task.FromResult<Character>(null!));
+        A.CallTo(() => service.Update(A<UpdateCharacterCommand>._)).Returns(Task.FromResult<Character?>(null));
 
         var result = await updateCharacter.Execute(command);
 

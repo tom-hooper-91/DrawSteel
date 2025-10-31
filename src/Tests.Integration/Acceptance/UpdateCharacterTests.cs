@@ -25,17 +25,14 @@ public class UpdateCharacterTests
         _api = new Characters(create, get, update, delete);
     }
 
-    // T019: Update character name successfully
     [TestCase("Frodo", "Frodo Baggins")]
     [TestCase("Sam", "Samwise Gamgee")]
     public async Task Update_character_name_successfully(string originalName, string newName)
     {
-        // Create a character first
         var createCommand = new CreateCharacterCommand(originalName);
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
-        // Update the character
         var updateCommand = new UpdateCharacterCommand(characterId!, newName);
         var updateResponse = await _api.Update(characterId!.ToString(), updateCommand) as OkObjectResult;
         var updatedCharacter = JsonSerializer.Deserialize<Character>(updateResponse!.Value!.ToString()!);
@@ -49,7 +46,6 @@ public class UpdateCharacterTests
         });
     }
 
-    // T020: Return 404 when character not found
     [Test]
     public async Task Return_404_when_character_not_found()
     {
@@ -61,20 +57,16 @@ public class UpdateCharacterTests
         Assert.That(response, Is.TypeOf<NotFoundResult>());
     }
 
-    // T021: Persist update across get requests
     [Test]
     public async Task Persist_update_across_get_requests()
     {
-        // Create a character
         var createCommand = new CreateCharacterCommand("Gandalf");
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
-        // Update the character
         var updateCommand = new UpdateCharacterCommand(characterId!, "Gandalf the White");
         await _api.Update(characterId!.ToString(), updateCommand);
 
-        // Verify the update persists
         var getResponse = await _api.Get(characterId.ToString()) as OkObjectResult;
         var retrievedCharacter = JsonSerializer.Deserialize<Character>(getResponse!.Value!.ToString()!);
 
@@ -86,44 +78,36 @@ public class UpdateCharacterTests
         });
     }
 
-    // T049: Return 404 when updating deleted character
     [Test]
     public async Task Return_404_when_updating_deleted_character()
     {
-        // Create a character
         var createCommand = new CreateCharacterCommand("Theoden");
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
-        // Delete the character
         await _api.Delete(characterId!.ToString());
 
-        // Try to update the deleted character
         var updateCommand = new UpdateCharacterCommand(characterId, "Theoden King");
         var updateResponse = await _api.Update(characterId.ToString(), updateCommand);
 
         Assert.That(updateResponse, Is.TypeOf<NotFoundResult>());
     }
 
-    // T050: Return 400 when empty name provided
     [TestCase("")]
     [TestCase(" ")]
     [TestCase("   ")]
     public async Task Return_400_when_empty_name_provided(string emptyName)
     {
-        // Create a character
         var createCommand = new CreateCharacterCommand("Eowyn");
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
-        // Try to update with empty name
         var updateCommand = new UpdateCharacterCommand(characterId!, emptyName);
         var updateResponse = await _api.Update(characterId!.ToString(), updateCommand);
 
         Assert.That(updateResponse, Is.TypeOf<BadRequestObjectResult>());
     }
 
-    // T051: Return 400 when invalid guid format
     [TestCase("not-a-guid")]
     [TestCase("12345")]
     [TestCase("invalid")]

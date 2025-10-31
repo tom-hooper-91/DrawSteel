@@ -45,7 +45,6 @@ public class CharacterServiceShould
         Assert.That(character, Is.EqualTo(expectedCharacter));
     }
 
-    // T008: Update character name successfully
     [TestCase("Frodo", "Frodo Baggins")]
     [TestCase("Sam", "Samwise Gamgee")]
     public async Task Update_character_name_successfully(string originalName, string newName)
@@ -66,7 +65,6 @@ public class CharacterServiceShould
         });
     }
 
-    // T009: Return null when updating nonexistent character
     [Test]
     public async Task Return_null_when_updating_nonexistent_character()
     {
@@ -79,7 +77,6 @@ public class CharacterServiceShould
         Assert.That(result, Is.Null);
     }
 
-    // T010: Throw exception when updating with empty name
     [TestCase("")]
     [TestCase(" ")]
     [TestCase(null)]
@@ -91,7 +88,6 @@ public class CharacterServiceShould
         Assert.ThrowsAsync<ArgumentException>(async () => await _service.Update(command));
     }
 
-    // T029: Delete character successfully
     [Test]
     public async Task Delete_character_successfully()
     {
@@ -103,7 +99,6 @@ public class CharacterServiceShould
         Assert.That(result, Is.True);
     }
 
-    // T030: Return false when deleting nonexistent character
     [Test]
     public async Task Return_false_when_deleting_nonexistent_character()
     {

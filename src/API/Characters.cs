@@ -39,13 +39,11 @@ public class Characters(
         return new OkObjectResult(JsonSerializer.Serialize(character));
     }
 
-    // T025: Add PUT endpoint
     [HttpPut("{characterId}")]
     public async Task<IActionResult> Update([FromRoute] string characterId, [FromBody] UpdateCharacterCommand command)
     {
         try
         {
-            // Validate GUID format
             if (!Guid.TryParse(characterId, out var guid))
                 return BadRequest(new { error = "Invalid character ID format", statusCode = 400 });
             
@@ -54,7 +52,6 @@ public class Characters(
             
             var character = await updateCharacter.Execute(updatedCommand);
             
-            // Null means not found
             if (character is null)
                 return NotFound();
             
@@ -62,7 +59,6 @@ public class Characters(
         }
         catch (ArgumentException ex)
         {
-            // Business rule violations (e.g., empty name)
             return BadRequest(new { error = ex.Message, statusCode = 400 });
         }
         catch
@@ -76,14 +72,12 @@ public class Characters(
     {
         try
         {
-            // Validate GUID format
             if (!Guid.TryParse(characterId, out var guid))
                 return BadRequest(new { error = "Invalid character ID format", statusCode = 400 });
             
             var id = new CharacterId(guid);
             await deleteCharacter.Execute(id);
             
-            // Always return success (idempotent)
             return Ok(new { message = "Character deleted successfully", characterId = id.Value });
         }
         catch

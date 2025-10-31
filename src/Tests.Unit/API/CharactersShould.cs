@@ -83,7 +83,6 @@ public class CharactersShould
         Assert.That(result, Is.TypeOf<NotFoundResult>());
     }
 
-    // T016: Return 200 with updated character on successful update
     [TestCase("Frodo", "Frodo Baggins")]
     [TestCase("Sam", "Samwise Gamgee")]
     public async Task Return_200_with_updated_character_on_successful_update(string oldName, string newName)
@@ -103,20 +102,18 @@ public class CharactersShould
         });
     }
 
-    // T017: Return 404 when updating nonexistent character
     [Test]
     public async Task Return_404_when_updating_nonexistent_character()
     {
         var unknownId = new CharacterId(Guid.NewGuid());
         var command = new UpdateCharacterCommand(unknownId, "New Name");
-        A.CallTo(() => _updateCharacter.Execute(A<UpdateCharacterCommand>._)).Returns(Task.FromResult<Character>(null!));
+        A.CallTo(() => _updateCharacter.Execute(A<UpdateCharacterCommand>._)).Returns(Task.FromResult<Character?>(null));
 
         var result = await _api.Update(unknownId.ToString(), command);
 
         Assert.That(result, Is.TypeOf<NotFoundResult>());
     }
 
-    // T018: Return 400 when updating with invalid guid
     [TestCase("not-a-guid")]
     [TestCase("12345")]
     [TestCase("")]
@@ -129,7 +126,6 @@ public class CharactersShould
         Assert.That(result, Is.Not.Null);
     }
 
-    // T052: Return 400 when updating with empty name
     [TestCase("")]
     [TestCase(" ")]
     [TestCase("   ")]
@@ -145,7 +141,6 @@ public class CharactersShould
         Assert.That(result, Is.Not.Null);
     }
 
-    // T036: Return 200 on successful delete
     [Test]
     public async Task Return_200_on_successful_delete()
     {
@@ -157,7 +152,6 @@ public class CharactersShould
         Assert.That(result, Is.Not.Null);
     }
 
-    // T037: Return 200 on idempotent delete
     [Test]
     public async Task Return_200_on_idempotent_delete()
     {
@@ -169,7 +163,6 @@ public class CharactersShould
         Assert.That(result, Is.Not.Null);
     }
 
-    // T038: Return 400 when deleting with invalid guid
     [TestCase("not-a-guid")]
     [TestCase("12345")]
     [TestCase("")]
