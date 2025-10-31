@@ -1,6 +1,6 @@
-@characterId = 7a56eb9b-b6f0-49b6-98c8-7504e2a4c9e7
+@characterId=
 
-POST {{HostAddress}}/api/characters
+POST /characters
 Content-Type: application/json
 Accept: application/json
 
@@ -10,4 +10,21 @@ Accept: application/json
 
 ###
 
-GET {{HostAddress}}/api/characters/{{characterId}}
+GET /characters/{{characterId}}
+
+###
+
+PUT /characters/{{characterId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": {
+    "value": "{{characterId}}"
+  },
+  "name": "Gandalf the White"
+}
+
+###
+
+DELETE /characters/{{characterId}}

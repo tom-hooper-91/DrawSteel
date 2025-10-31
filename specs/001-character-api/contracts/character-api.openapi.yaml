@@ -1,0 +1,350 @@
+openapi: 3.0.3
+info:
+  title: Character API
+  description: API for managing Draw Steel game characters - Create, Read, Update, Delete operations
+  version: 1.1.0
+  contact:
+    name: Draw Steel Team
+servers:
+  - url: https://api.drawsteel.com
+    description: Production
+  - url: http://localhost:5000
+    description: Local development
+
+paths:
+  /api/characters:
+    post:
+      summary: Create a new character
+      description: Creates a new character with the provided name
+      operationId: createCharacter
+      tags:
+        - Characters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCharacterRequest'
+            examples:
+              validCharacter:
+                summary: Valid character creation
+                value:
+                  name: "Aragorn"
+      responses:
+        '200':
+          description: Character created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterIdResponse'
+              examples:
+                success:
+                  summary: Successful creation
+                  value:
+                    value: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        '400':
+          description: Invalid request - empty or missing name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                emptyName:
+                  summary: Empty name provided
+                  value:
+                    error: "Character name cannot be empty"
+                    statusCode: 400
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/characters/{characterId}:
+    get:
+      summary: Get a character by ID
+      description: Retrieves a character's details by their unique identifier
+      operationId: getCharacter
+      tags:
+        - Characters
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+      responses:
+        '200':
+          description: Character found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+              examples:
+                success:
+                  summary: Character retrieved
+                  value:
+                    id:
+                      value: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    name: "Aragorn"
+        '404':
+          description: Character not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                notFound:
+                  summary: Character doesn't exist
+                  value:
+                    error: "Character not found"
+                    statusCode: 404
+        '400':
+          description: Invalid character ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidGuid:
+                  summary: Invalid GUID format
+                  value:
+                    error: "Invalid character ID format"
+                    statusCode: 400
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update a character
+      description: Updates an existing character's information (full replacement)
+      operationId: updateCharacter
+      tags:
+        - Characters
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCharacterRequest'
+            examples:
+              validUpdate:
+                summary: Valid character update
+                value:
+                  name: "Strider"
+      responses:
+        '200':
+          description: Character updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+              examples:
+                success:
+                  summary: Successful update
+                  value:
+                    id:
+                      value: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    name: "Strider"
+        '404':
+          description: Character not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                notFound:
+                  summary: Character doesn't exist
+                  value:
+                    error: "Character not found"
+                    statusCode: 404
+        '400':
+          description: Invalid request - empty name or invalid ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                emptyName:
+                  summary: Empty name provided
+                  value:
+                    error: "Character name cannot be empty"
+                    statusCode: 400
+                invalidGuid:
+                  summary: Invalid GUID format
+                  value:
+                    error: "Invalid character ID format"
+                    statusCode: 400
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a character
+      description: Permanently removes a character from the system (idempotent operation)
+      operationId: deleteCharacter
+      tags:
+        - Characters
+      parameters:
+        - $ref: '#/components/parameters/CharacterId'
+      responses:
+        '200':
+          description: Character deleted successfully (or already deleted - idempotent)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+              examples:
+                success:
+                  summary: Successful deletion
+                  value:
+                    message: "Character deleted successfully"
+                    characterId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                alreadyDeleted:
+                  summary: Already deleted (idempotent)
+                  value:
+                    message: "Character deleted successfully"
+                    characterId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        '400':
+          description: Invalid character ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidGuid:
+                  summary: Invalid GUID format
+                  value:
+                    error: "Invalid character ID format"
+                    statusCode: 400
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  parameters:
+    CharacterId:
+      name: characterId
+      in: path
+      description: Unique identifier for the character (GUID format)
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+
+  schemas:
+    CharacterId:
+      type: object
+      description: Strongly-typed character identifier
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          format: uuid
+          description: GUID value of the character identifier
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+
+    Character:
+      type: object
+      description: Character entity with identifier and name
+      required:
+        - id
+        - name
+      properties:
+        id:
+          $ref: '#/components/schemas/CharacterId'
+        name:
+          type: string
+          description: Character's name
+          minLength: 1
+          maxLength: 200
+          example: "Aragorn"
+
+    CreateCharacterRequest:
+      type: object
+      description: Request body for creating a new character
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Character's name (cannot be empty)
+          minLength: 1
+          maxLength: 200
+          example: "Aragorn"
+
+    UpdateCharacterRequest:
+      type: object
+      description: Request body for updating an existing character
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Updated character name (cannot be empty)
+          minLength: 1
+          maxLength: 200
+          example: "Strider"
+
+    CharacterIdResponse:
+      type: object
+      description: Response containing the character identifier
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          format: uuid
+          description: GUID value of the created character
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+
+    DeleteResponse:
+      type: object
+      description: Response for successful character deletion
+      required:
+        - message
+        - characterId
+      properties:
+        message:
+          type: string
+          description: Confirmation message
+          example: "Character deleted successfully"
+        characterId:
+          type: string
+          format: uuid
+          description: ID of the deleted character
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+
+    ErrorResponse:
+      type: object
+      description: Error response structure
+      required:
+        - error
+        - statusCode
+      properties:
+        error:
+          type: string
+          description: Error message describing what went wrong
+          example: "Character not found"
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 404
+        details:
+          type: string
+          description: Optional additional error details
+          example: "Character with ID 3fa85f64-5717-4562-b3fc-2c963f66afa6 does not exist"
+
+tags:
+  - name: Characters
+    description: Operations for managing game characters

@@ -20,7 +20,9 @@ public class CharacterFeatures
         var service = new CharacterService(_repository);
         var create = new CreateCharacter(service);
         var get = new GetCharacter(service);
-        _api = new Characters(create, get);
+        var update = new UpdateCharacter(service);
+        var delete = new DeleteCharacter(service);
+        _api = new Characters(create, get, update, delete);
     }
 
     [Test]
