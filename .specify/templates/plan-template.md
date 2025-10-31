@@ -13,25 +13,31 @@
 
 <!--
   ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
+  for this specific feature. The defaults below reflect the Draw Steel project stack.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: C# / .NET [specify version if relevant]
+**Architecture**: Interaction-Driven Design (IDD) with Application layer mediating between Presentation and Domain
+**Primary Dependencies**: [e.g., MongoDB.Driver, Microsoft.AspNetCore, Microsoft.AspNetCore.Components or NEEDS CLARIFICATION]
+**Storage**: MongoDB (containerized locally, Azure CosmosDB for MongoDB API in production)
+**Testing**: NUnit (unit & integration), FakeItEasy (mocking), Testcontainers (integration dependencies)
+**Target Platform**: Azure Container Apps (production), Docker Compose (local development)
+**Presentation Layer**: [Specify: API (ASP.NET Core Web API) OR Web (Blazor) OR Both - per feature requirements]
+**Performance Goals**: [domain-specific, e.g., <200ms API response time, interactive UI updates or NEEDS CLARIFICATION]
+**Constraints**: [domain-specific, e.g., Azure free tier limits, MongoDB document size limits or NEEDS CLARIFICATION]
+**Scale/Scope**: [domain-specific, e.g., 100 concurrent users, 10k characters, single-page form or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **IDD Architecture**: Confirms Application layer mediates between Presentation (API/Web) and Domain
+- [ ] **Testing Standards**: NUnit, FakeItEasy, and Testcontainers planned for appropriate test levels
+- [ ] **Test Pyramid**: Unit tests dominate, integration tests moderate, E2E minimal (critical paths only)
+- [ ] **Clean Code & SOLID**: Design respects single responsibility, dependency inversion, and clear interfaces
+- [ ] **Minimal Dependencies**: New dependencies justified and well-maintained
+- [ ] **IaC Compliance**: Infrastructure changes use Terraform with azurerm provider (azapi only if required)
+- [ ] **CI/CD**: GitHub Actions workflow planned for testing, build, and deployment gates
 
 ## Project Structure
 
@@ -51,48 +57,43 @@ specs/[###-feature]/
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
   for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
+  real paths specific to this feature. The delivered plan must not include Option labels.
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+# Interaction-Driven Design (IDD) Structure
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── API/                 # ASP.NET Core Web API presentation layer (if feature uses API)
+│   ├── [Feature].cs
+│   └── Program.cs
+├── Application/         # Use cases and orchestration
+│   ├── I[UseCase].cs    # Interface
+│   └── [UseCase].cs     # Implementation
+├── Domain/              # Business logic and entities
+│   ├── [Entity].cs
+│   ├── [EntityId].cs
+│   ├── [Service].cs
+│   └── Repositories/
+│       └── I[Name]Repository.cs
+├── Infrastructure/      # External concerns (DB, APIs)
+│   ├── [Name]Repository.cs
+│   └── ConfigureDatabase.cs
+└── Web/                 # Blazor presentation layer (if feature uses Web)
+    ├── Components/
+    │   └── [Feature].razor
+    └── Program.cs
 
-tests/
-├── contract/
-├── integration/
-└── unit/
+Tests.Unit/              # Fast, isolated unit tests (NUnit + FakeItEasy)
+├── API/
+├── Application/
+└── Domain/
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+Tests.Integration/       # Cross-boundary tests (Testcontainers)
+└── Acceptance/
+    └── [Feature]Tests.cs
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: [Document which presentation layer (API or Web) is used for this feature and any specific architectural decisions]
 
 ## Complexity Tracking
 
