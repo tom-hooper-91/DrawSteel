@@ -1,4 +1,5 @@
 @characterId=
+###
 
 POST /characters
 Content-Type: application/json

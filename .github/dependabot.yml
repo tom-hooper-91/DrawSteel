@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/src" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       nuget-all:
         patterns:
@@ -11,15 +11,15 @@ updates:
   - package-ecosystem: "terraform" # See documentation for possible values
     directory: "/infra" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       terraform-all:
         patterns:
           - "*"
   - package-ecosystem: "docker" # See documentation for possible values
-    directory: "/src" # Location of package manifests
+    directory: "/src/API" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       docker-all:
         patterns:
@@ -27,7 +27,7 @@ updates:
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       gha-all:
         patterns:
