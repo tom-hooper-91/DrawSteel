@@ -4,8 +4,9 @@ namespace Application;
 
 public class GetCharacter(ICharacterService service) : IGetCharacter
 {
-    public async Task<Character?> Execute(CharacterId characterId)
+    public async Task<CharacterDto?> Execute(CharacterId characterId)
     {
-        return await service.Get(characterId);
+        var character = await service.Get(characterId);
+        return character is null ? null : CharacterDto.FromCharacter(character);
     }
 }

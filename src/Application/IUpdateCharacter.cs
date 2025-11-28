@@ -4,5 +4,5 @@ namespace Application;
 
 public interface IUpdateCharacter
 {
-    Task<Character?> Execute(UpdateCharacterCommand command);
+    Task<CharacterDto?> Execute(UpdateCharacterInput request);
 }

@@ -1,7 +1,12 @@
+using API.Diagnostics;
+using API.Validation;
 using Application;
 using Domain;
 using Domain.Repositories;
 using Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,18 +20,44 @@ builder.Services
     .AddScoped<IGetCharacter, GetCharacter>()
     .AddScoped<IUpdateCharacter, UpdateCharacter>()
     .AddScoped<IDeleteCharacter, DeleteCharacter>()
+    .AddScoped<IListCharacters, ListCharacters>()
     .AddScoped<ICharacterService, CharacterService>()
     .AddScoped<ICharacterRepository, MongoDbCharacterRepository>()
-    .AddControllers();
+    .AddScoped<ModelStateValidationFilter>();
 
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables()
-    .Build();
+builder.Services
+    .AddControllers(options =>
+    {
+        options.Filters.AddService<ModelStateValidationFilter>();
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.WriteIndented = false;
+    });
 
-builder.ConfigureDatabase(configuration.GetConnectionString("MongoDB") ??
-                          configuration["MONGODB_CONNECTION_STRING"]);
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(state => state.Value?.Errors.Count > 0)
+            .ToDictionary(
+                pair => pair.Key,
+                pair => pair.Value!.Errors.Select(error => error.ErrorMessage).ToArray());
+
+        var detail = "Payload validation failed";
+        var problem = ValidationProblemFactory.InvalidPayload(detail, errors);
+        return problem.ToResult();
+    };
+});
+
+var connectionString = builder.Configuration["MONGODB_CONNECTION_STRING"] ??
+                      builder.Configuration.GetConnectionString("MongoDB");
+
+builder.ConfigureDatabase(connectionString);
 
 var app = builder.Build();
 
@@ -38,6 +69,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapControllers().WithOpenApi();
+app.MapControllers();
 // app.UseExceptionHandler("/error");
 await app.RunAsync();
+
+public partial class Program;

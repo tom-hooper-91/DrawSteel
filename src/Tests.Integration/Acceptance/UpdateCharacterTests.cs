@@ -1,5 +1,6 @@
-using System.Text.Json;
 using API;
+using API.Contracts;
+using API.Requests;
 using Application;
 using Domain;
 using Infrastructure;
@@ -10,39 +11,44 @@ namespace Tests.Integration.Acceptance;
 [TestFixture]
 public class UpdateCharacterTests
 {
-    private MongoDbCharacterRepository _repository;
-    private Characters _api;
+    private MongoDbCharacterRepository _repository = null!;
+    private Characters _api = null!;
 
     [SetUp]
-    public void Setup()
+    public async Task Setup()
     {
-        _repository = new MongoDbCharacterRepository(Fixture.Client);
+        _repository = new MongoDbCharacterRepository(CharacterApiFixture.MongoClient);
         var service = new CharacterService(_repository);
         var create = new CreateCharacter(service);
         var get = new GetCharacter(service);
         var update = new UpdateCharacter(service);
         var delete = new DeleteCharacter(service);
-        _api = new Characters(create, get, update, delete);
+        var list = new ListCharacters(service);
+        _api = new Characters(create, get, update, delete, list);
+
+        await CharacterApiFixture.ClearCharactersAsync();
     }
 
     [TestCase("Frodo", "Frodo Baggins")]
     [TestCase("Sam", "Samwise Gamgee")]
     public async Task Update_character_name_successfully(string originalName, string newName)
     {
-        var createCommand = new CreateCharacterCommand(originalName);
-        var createResponse = await _api.Create(createCommand) as OkObjectResult;
-        var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
+        var createRequest = new CharacterRequest { Name = originalName };
+        var createResponse = await _api.Create(createRequest) as OkObjectResult;
+        var createdCharacter = createResponse?.Value as CharacterResponse;
+        Assert.That(createdCharacter, Is.Not.Null);
+        var characterId = new CharacterId(Guid.Parse(createdCharacter!.Id));
 
-        var updateCommand = new UpdateCharacterCommand(characterId!, newName);
-        var updateResponse = await _api.Update(characterId!.ToString(), updateCommand) as OkObjectResult;
-        var updatedCharacter = JsonSerializer.Deserialize<Character>(updateResponse!.Value!.ToString()!);
+        var updateRequest = new CharacterRequest { Id = characterId.Value.ToString(), Name = newName };
+        var updateResponse = await _api.Update(characterId.Value, updateRequest) as OkObjectResult;
+        var updatedCharacter = updateResponse?.Value as CharacterResponse;
 
         Assert.Multiple(() =>
         {
             Assert.That(updateResponse, Is.TypeOf<OkObjectResult>());
             Assert.That(updatedCharacter, Is.Not.Null);
             Assert.That(updatedCharacter!.Name, Is.EqualTo(newName));
-            Assert.That(updatedCharacter.Id, Is.EqualTo(characterId));
+            Assert.That(Guid.Parse(updatedCharacter.Id), Is.EqualTo(characterId.Value));
         });
     }
 
@@ -50,9 +56,9 @@ public class UpdateCharacterTests
     public async Task Return_404_when_character_not_found()
     {
         var unknownId = new CharacterId(Guid.NewGuid());
-        var updateCommand = new UpdateCharacterCommand(unknownId, "New Name");
+        var request = new CharacterRequest { Id = unknownId.Value.ToString(), Name = "New Name" };
 
-        var response = await _api.Update(unknownId.ToString(), updateCommand);
+        var response = await _api.Update(unknownId.Value, request);
 
         Assert.That(response, Is.TypeOf<NotFoundResult>());
     }
@@ -60,35 +66,39 @@ public class UpdateCharacterTests
     [Test]
     public async Task Persist_update_across_get_requests()
     {
-        var createCommand = new CreateCharacterCommand("Gandalf");
-        var createResponse = await _api.Create(createCommand) as OkObjectResult;
-        var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
+        var createRequest = new CharacterRequest { Name = "Gandalf" };
+        var createResponse = await _api.Create(createRequest) as OkObjectResult;
+        var createdCharacter = createResponse?.Value as CharacterResponse;
+        Assert.That(createdCharacter, Is.Not.Null);
+        var characterId = new CharacterId(Guid.Parse(createdCharacter!.Id));
 
-        var updateCommand = new UpdateCharacterCommand(characterId!, "Gandalf the White");
-        await _api.Update(characterId!.ToString(), updateCommand);
+        var updateRequest = new CharacterRequest { Id = characterId.Value.ToString(), Name = "Gandalf the White" };
+        await _api.Update(characterId.Value, updateRequest);
 
-        var getResponse = await _api.Get(characterId.ToString()) as OkObjectResult;
-        var retrievedCharacter = JsonSerializer.Deserialize<Character>(getResponse!.Value!.ToString()!);
+        var getResponse = await _api.Get(characterId.Value) as OkObjectResult;
+        var retrievedCharacter = getResponse?.Value as CharacterResponse;
 
         Assert.Multiple(() =>
         {
             Assert.That(retrievedCharacter, Is.Not.Null);
             Assert.That(retrievedCharacter!.Name, Is.EqualTo("Gandalf the White"));
-            Assert.That(retrievedCharacter.Id, Is.EqualTo(characterId));
+            Assert.That(Guid.Parse(retrievedCharacter.Id), Is.EqualTo(characterId.Value));
         });
     }
 
     [Test]
     public async Task Return_404_when_updating_deleted_character()
     {
-        var createCommand = new CreateCharacterCommand("Theoden");
-        var createResponse = await _api.Create(createCommand) as OkObjectResult;
-        var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
+        var createRequest = new CharacterRequest { Name = "Theoden" };
+        var createResponse = await _api.Create(createRequest) as OkObjectResult;
+        var createdCharacter = createResponse?.Value as CharacterResponse;
+        Assert.That(createdCharacter, Is.Not.Null);
+        var characterId = new CharacterId(Guid.Parse(createdCharacter!.Id));
 
-        await _api.Delete(characterId!.ToString());
+        await _api.Delete(characterId.Value);
 
-        var updateCommand = new UpdateCharacterCommand(characterId, "Theoden King");
-        var updateResponse = await _api.Update(characterId.ToString(), updateCommand);
+        var updateRequest = new CharacterRequest { Id = characterId.Value.ToString(), Name = "Theoden King" };
+        var updateResponse = await _api.Update(characterId.Value, updateRequest);
 
         Assert.That(updateResponse, Is.TypeOf<NotFoundResult>());
     }
@@ -98,24 +108,18 @@ public class UpdateCharacterTests
     [TestCase("   ")]
     public async Task Return_400_when_empty_name_provided(string emptyName)
     {
-        var createCommand = new CreateCharacterCommand("Eowyn");
-        var createResponse = await _api.Create(createCommand) as OkObjectResult;
-        var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
+        var createRequest = new CharacterRequest { Name = "Eowyn" };
+        var createResponse = await _api.Create(createRequest) as OkObjectResult;
+        var createdCharacter = createResponse?.Value as CharacterResponse;
+        Assert.That(createdCharacter, Is.Not.Null);
+        var characterId = new CharacterId(Guid.Parse(createdCharacter!.Id));
 
-        var updateCommand = new UpdateCharacterCommand(characterId!, emptyName);
-        var updateResponse = await _api.Update(characterId!.ToString(), updateCommand);
-
-        Assert.That(updateResponse, Is.TypeOf<BadRequestObjectResult>());
-    }
-
-    [TestCase("not-a-guid")]
-    [TestCase("12345")]
-    [TestCase("invalid")]
-    public async Task Return_400_when_invalid_guid_format(string invalidGuid)
-    {
-        var updateCommand = new UpdateCharacterCommand(new CharacterId(Guid.NewGuid()), "Test Name");
-        var updateResponse = await _api.Update(invalidGuid, updateCommand);
+        var updateRequest = new CharacterRequest { Id = characterId.Value.ToString(), Name = emptyName };
+        var updateResponse = await _api.Update(characterId.Value, updateRequest);
 
         Assert.That(updateResponse, Is.TypeOf<BadRequestObjectResult>());
     }
+
+    // Route binding enforces GUID parsing before controller logic is invoked, so invalid
+    // GUID scenarios are covered by API-level tests instead of controller invocations.
 }

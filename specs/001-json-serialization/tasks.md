@@ -21,9 +21,9 @@ description: "Task list for Consistent Character JSON Contract"
 
 **Purpose**: Align documentation and tooling so every contributor can run serialization work immediately.
 
-- [ ] T001 Document serialization prerequisites and run commands in `specs/001-json-serialization/quickstart.md`
-- [ ] T002 [P] Add feature overview + contract links to `README.md`
-- [ ] T003 [P] Seed flattened-id request/response samples for manual smoke tests in `src/API/API.http`
+- [X] T001 Document serialization prerequisites and run commands in `specs/001-json-serialization/quickstart.md`
+- [X] T002 [P] Add feature overview + contract links to `README.md`
+- [X] T003 [P] Seed flattened-id request/response samples for manual smoke tests in `src/API/API.http`
 
 ---
 
@@ -31,10 +31,10 @@ description: "Task list for Consistent Character JSON Contract"
 
 **Purpose**: Establish shared infrastructure (fixtures, diagnostics, serializer configuration) required by all user stories.
 
-- [ ] T004 Create shared API + Mongo Testcontainers harness in `src/Tests.Integration/Acceptance/CharacterApiFixture.cs`
-- [ ] T005 [P] Add reusable JSON contract assertion helpers in `src/Tests.Integration/Acceptance/Assertions/JsonContractAssertions.cs`
-- [ ] T006 [P] Introduce consistent `ValidationProblemDetails` factory + extensions in `src/API/Diagnostics/ValidationProblemFactory.cs`
-- [ ] T007 Wire serializer options and the problem factory into the HTTP pipeline in `src/API/Program.cs`
+- [X] T004 Create shared API + Mongo Testcontainers harness in `src/Tests.Integration/Acceptance/CharacterApiFixture.cs`
+- [X] T005 [P] Add reusable JSON contract assertion helpers in `src/Tests.Integration/Acceptance/Assertions/JsonContractAssertions.cs`
+- [X] T006 [P] Introduce consistent `ValidationProblemDetails` factory + extensions in `src/API/Diagnostics/ValidationProblemFactory.cs`
+- [X] T007 Wire serializer options and the problem factory into the HTTP pipeline in `src/API/Program.cs`
 
 **Checkpoint**: Integration harness, validation infrastructure, and serializer plumbing are ready for story work.
 
@@ -48,18 +48,18 @@ description: "Task list for Consistent Character JSON Contract"
 
 ### Tests for User Story 1 (write first, ensure they fail)
 
-- [ ] T008 [P] [US1] Update response-shape expectations in `src/Tests.Unit/API/CharactersShould.cs` so assertions fail when `id.value` appears
-- [ ] T009 [P] [US1] Update `src/Tests.Unit/Application/GetCharacterShould.cs` (and related test doubles) to expect flattened response DTOs
-- [ ] T010 [P] [US1] Add GET/list/create contract coverage to `src/Tests.Integration/Acceptance/CharacterSerializationTests.cs` that snapshots scalar `id`
+- [X] T008 [P] [US1] Update response-shape expectations in `src/Tests.Unit/API/CharactersShould.cs` so assertions fail when `id.value` appears
+- [X] T009 [P] [US1] Update `src/Tests.Unit/Application/GetCharacterShould.cs` (and related test doubles) to expect flattened response DTOs
+- [X] T010 [P] [US1] Add GET/list/create contract coverage to `src/Tests.Integration/Acceptance/CharacterSerializationTests.cs` that snapshots scalar `id`
 
 ### Implementation for User Story 1
 
-- [ ] T011 [P] [US1] Add `CharacterResponse` + `CharacterListItem` DTOs exposing `string id` in `src/API/Contracts/CharacterResponse.cs`
-- [ ] T012 [P] [US1] Implement `CharacterContractMapper` to project `Domain.Character` → DTOs in `src/API/Contracts/CharacterContractMapper.cs`
-- [ ] T013 [US1] Introduce `CharacterDto` outputs and update use cases in `src/Application/IGetCharacter.cs`, `src/Application/GetCharacter.cs`, `src/Application/IUpdateCharacter.cs`, `src/Application/UpdateCharacter.cs`
-- [ ] T014 [US1] Rewrite `src/API/Characters.cs` endpoints to rely on the mapper and return strongly typed DTOs across every response
-- [ ] T015 [US1] Refresh response schemas/examples in `specs/001-json-serialization/contracts/character-json-contract.openapi.yaml` to reflect scalar `id`
-- [ ] T016 [US1] Run serialization suite via `src/Tests.Integration/Tests.Integration.csproj` to prove P1 contract stability
+- [X] T011 [P] [US1] Add `CharacterResponse` + `CharacterListItem` DTOs exposing `string id` in `src/API/Contracts/CharacterResponse.cs`
+- [X] T012 [P] [US1] Implement `CharacterContractMapper` to project `Domain.Character` → DTOs in `src/API/Contracts/CharacterContractMapper.cs`
+- [X] T013 [US1] Introduce `CharacterDto` outputs and update use cases in `src/Application/IGetCharacter.cs`, `src/Application/GetCharacter.cs`, `src/Application/IUpdateCharacter.cs`, `src/Application/UpdateCharacter.cs`
+- [X] T014 [US1] Rewrite `src/API/Characters.cs` endpoints to rely on the mapper and return strongly typed DTOs across every response
+- [X] T015 [US1] Refresh response schemas/examples in `specs/001-json-serialization/contracts/character-json-contract.openapi.yaml` to reflect scalar `id`
+- [X] T016 [US1] Run serialization suite via `src/Tests.Integration/Tests.Integration.csproj` to prove P1 contract stability
 
 **Checkpoint**: All outbound payloads now share the same `id` field; integration tests document the contract.
 
@@ -99,13 +99,13 @@ description: "Task list for Consistent Character JSON Contract"
 
 ### Tests for User Story 3 (write first, ensure they fail)
 
-- [ ] T027 [P] [US3] Author canonical CRUD + error fixtures under `specs/001-json-serialization/contracts/fixtures/*.json`
-- [ ] T028 [P] [US3] Build happy-path snapshot tests in `src/Tests.Integration/Acceptance/CharacterContractTests.cs` comparing API output to fixtures
-- [ ] T029 [P] [US3] Add validation/error snapshot coverage (invalid GUID, legacy payload) to `src/Tests.Integration/Acceptance/CharacterContractTests.cs`
+- [X] T027 [P] [US3] Author canonical CRUD + error fixtures under `specs/001-json-serialization/contracts/fixtures/*.json`
+- [X] T028 [P] [US3] Build happy-path snapshot tests in `src/Tests.Integration/Acceptance/CharacterContractTests.cs` comparing API output to fixtures
+- [X] T029 [P] [US3] Add validation/error snapshot coverage (invalid GUID, legacy payload) to `src/Tests.Integration/Acceptance/CharacterContractTests.cs`
 
 ### Implementation for User Story 3
 
-- [ ] T030 [US3] Implement fixture loader/updater utilities in `src/Tests.Integration/Acceptance/Fixtures/ContractFixtureStore.cs`
+- [X] T030 [US3] Implement fixture loader/updater utilities in `src/Tests.Integration/Acceptance/Fixtures/ContractFixtureStore.cs`
 - [ ] T031 [US3] Tag and include contract tests in CI by updating `src/Tests.Integration/Tests.Integration.csproj`
 - [ ] T032 [US3] Document fixture maintenance + contract test workflow in `specs/001-json-serialization/quickstart.md`
 - [ ] T033 [US3] Publish a fixture index / consumer guidance in `specs/001-json-serialization/contracts/README.md`

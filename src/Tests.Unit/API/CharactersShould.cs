@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using API;
+using API.Requests;
 using Application;
 using Domain;
 using FakeItEasy;
@@ -16,6 +17,7 @@ public class CharactersShould
     private IGetCharacter _getCharacter;
     private IUpdateCharacter _updateCharacter;
     private IDeleteCharacter _deleteCharacter;
+    private IListCharacters _listCharacters;
 
     [SetUp]
     public void Setup()
@@ -24,29 +26,38 @@ public class CharactersShould
         _getCharacter = A.Fake<IGetCharacter>();
         _updateCharacter = A.Fake<IUpdateCharacter>();
         _deleteCharacter = A.Fake<IDeleteCharacter>();
-        _api = new Characters(_createCharacter, _getCharacter, _updateCharacter, _deleteCharacter);
+        _listCharacters = A.Fake<IListCharacters>();
+        _api = new Characters(_createCharacter, _getCharacter, _updateCharacter, _deleteCharacter, _listCharacters);
     }
 
     [TestCase("Frodo")]
     [TestCase("Sam")]
-    public async Task Return_serialised_characterId_on_post(string name)
+    public async Task Return_flat_characterId_on_post(string name)
     {
-        var newCharacter = new CreateCharacterCommand(name);
         var expectedCharacterId = new CharacterId(Guid.NewGuid());
-        A.CallTo(() => _createCharacter.Execute(newCharacter)).Returns(expectedCharacterId);
+        A.CallTo(() => _createCharacter.Execute(A<CreateCharacterInput>.That.Matches(input => input.Name == name)))
+            .Returns(expectedCharacterId);
 
-        var response = await _api.Create(newCharacter) as OkObjectResult;
-        var characterId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
+        var request = new CharacterRequest { Name = name };
 
-        A.CallTo(() => _createCharacter.Execute(newCharacter)).MustHaveHappenedOnceExactly();
-        Assert.That(characterId, Is.EqualTo(expectedCharacterId));
+        var response = await _api.Create(request) as OkObjectResult;
+        var payload = response.ExtractPayload();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(payload.TryGetProperty("id", out var idProperty), Is.True, "Response must include flattened 'id'.");
+            Assert.That(Guid.Parse(idProperty.GetString() ?? string.Empty), Is.EqualTo(expectedCharacterId.Value));
+        });
+
+        A.CallTo(() => _createCharacter.Execute(A<CreateCharacterInput>.That.Matches(input => input.Name == name)))
+            .MustHaveHappenedOnceExactly();
     }
 
     [Test]
     public async Task Return_bad_request_when_CreateCharacter_throws()
     {
-        var badCharacter = new CreateCharacterCommand("Something broken");
-        A.CallTo(() => _createCharacter.Execute(badCharacter)).Throws(new Exception("This went wrong"));
+        var badCharacter = new CharacterRequest { Name = "Something broken" };
+        A.CallTo(() => _createCharacter.Execute(A<CreateCharacterInput>._)).Throws(new Exception("This went wrong"));
 
         var response = await _api.Create(badCharacter) as ObjectResult;
 
@@ -63,22 +74,27 @@ public class CharactersShould
     public async Task Return_serialised_character_on_get(string name)
     {
         var existingCharacterId = new CharacterId(Guid.NewGuid());
-        var existingCharacter = new Character(existingCharacterId, name);
-        A.CallTo(() => _getCharacter.Execute(existingCharacterId)).Returns(existingCharacter);
+        var expectedDto = new CharacterDto(existingCharacterId.Value.ToString(), name);
+        A.CallTo(() => _getCharacter.Execute(existingCharacterId)).Returns(Task.FromResult<CharacterDto?>(expectedDto));
 
-        var response = await _api.Get(existingCharacterId.ToString()) as OkObjectResult;
-        var returnedCharacter = JsonSerializer.Deserialize<Character>(response!.Value!.ToString()!);
+        var response = await _api.Get(existingCharacterId.Value) as OkObjectResult;
+        var payload = response.ExtractPayload();
 
-        Assert.That(returnedCharacter, Is.EqualTo(existingCharacter));
+        Assert.Multiple(() =>
+        {
+            Assert.That(payload.TryGetProperty("id", out var idProperty), Is.True);
+            Assert.That(Guid.Parse(idProperty.GetString() ?? string.Empty), Is.EqualTo(existingCharacterId.Value));
+            Assert.That(payload.GetProperty("name").GetString(), Is.EqualTo(name));
+        });
     }
 
     [Test]
     public async Task Return_not_found_result_when_Character_does_not_exist()
     {
         var unknownId = new CharacterId(Guid.NewGuid());
-        A.CallTo(() => _getCharacter.Execute(unknownId))!.Returns(Task.FromResult<Character>(null!));
+        A.CallTo(() => _getCharacter.Execute(unknownId))!.Returns(Task.FromResult<CharacterDto?>(null));
 
-        var result = await _api.Get(unknownId.ToString());
+        var result = await _api.Get(unknownId.Value);
 
         Assert.That(result, Is.TypeOf<NotFoundResult>());
     }
@@ -88,17 +104,24 @@ public class CharactersShould
     public async Task Return_200_with_updated_character_on_successful_update(string oldName, string newName)
     {
         var characterId = new CharacterId(Guid.NewGuid());
-        var command = new UpdateCharacterCommand(characterId, newName);
-        var updatedCharacter = new Character(characterId, newName);
-        A.CallTo(() => _updateCharacter.Execute(A<UpdateCharacterCommand>._)).Returns(updatedCharacter);
+        var updatedCharacter = new CharacterDto(characterId.Value.ToString(), newName);
+        A.CallTo(() => _updateCharacter.Execute(A<UpdateCharacterInput>.That.Matches(input =>
+                input.RouteId == characterId.Value &&
+                input.PayloadId == characterId.Value.ToString() &&
+                input.Name == newName)))
+            .Returns(Task.FromResult<CharacterDto?>(updatedCharacter));
 
-        var response = await _api.Update(characterId.ToString(), command) as OkObjectResult;
-        var returnedCharacter = JsonSerializer.Deserialize<Character>(response!.Value!.ToString()!);
+        var request = new CharacterRequest { Id = characterId.Value.ToString(), Name = newName };
+
+        var response = await _api.Update(characterId.Value, request) as OkObjectResult;
+        var payload = response.ExtractPayload();
 
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.Not.Null);
-            Assert.That(returnedCharacter, Is.EqualTo(updatedCharacter));
+            Assert.That(payload.TryGetProperty("id", out var idProperty), Is.True);
+            Assert.That(Guid.Parse(idProperty.GetString() ?? string.Empty), Is.EqualTo(characterId.Value));
+            Assert.That(payload.GetProperty("name").GetString(), Is.EqualTo(updatedCharacter.Name));
         });
     }
 
@@ -106,24 +129,12 @@ public class CharactersShould
     public async Task Return_404_when_updating_nonexistent_character()
     {
         var unknownId = new CharacterId(Guid.NewGuid());
-        var command = new UpdateCharacterCommand(unknownId, "New Name");
-        A.CallTo(() => _updateCharacter.Execute(A<UpdateCharacterCommand>._)).Returns(Task.FromResult<Character?>(null));
+        var request = new CharacterRequest { Id = unknownId.Value.ToString(), Name = "New Name" };
+        A.CallTo(() => _updateCharacter.Execute(A<UpdateCharacterInput>._)).Returns(Task.FromResult<CharacterDto?>(null));
 
-        var result = await _api.Update(unknownId.ToString(), command);
+        var result = await _api.Update(unknownId.Value, request);
 
         Assert.That(result, Is.TypeOf<NotFoundResult>());
-    }
-
-    [TestCase("not-a-guid")]
-    [TestCase("12345")]
-    [TestCase("")]
-    public async Task Return_400_when_updating_with_invalid_guid(string invalidGuid)
-    {
-        var command = new UpdateCharacterCommand(new CharacterId(Guid.NewGuid()), "New Name");
-
-        var result = await _api.Update(invalidGuid, command) as BadRequestObjectResult;
-
-        Assert.That(result, Is.Not.Null);
     }
 
     [TestCase("")]
@@ -132,13 +143,14 @@ public class CharactersShould
     public async Task Return_400_when_updating_with_empty_name(string emptyName)
     {
         var characterId = new CharacterId(Guid.NewGuid());
-        var command = new UpdateCharacterCommand(characterId, emptyName);
-        A.CallTo(() => _updateCharacter.Execute(A<UpdateCharacterCommand>._))
+        var request = new CharacterRequest { Id = characterId.Value.ToString(), Name = emptyName };
+        A.CallTo(() => _updateCharacter.Execute(A<UpdateCharacterInput>._))
             .Throws(new ArgumentException("Character name cannot be empty"));
 
-        var result = await _api.Update(characterId.ToString(), command) as BadRequestObjectResult;
+        var result = await _api.Update(characterId.Value, request) as ObjectResult;
 
         Assert.That(result, Is.Not.Null);
+        Assert.That(result!.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
     }
 
     [Test]
@@ -147,7 +159,7 @@ public class CharactersShould
         var characterId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => _deleteCharacter.Execute(characterId)).Returns(true);
 
-        var result = await _api.Delete(characterId.ToString()) as OkObjectResult;
+        var result = await _api.Delete(characterId.Value) as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
     }
@@ -158,18 +170,31 @@ public class CharactersShould
         var characterId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => _deleteCharacter.Execute(characterId)).Returns(false);
 
-        var result = await _api.Delete(characterId.ToString()) as OkObjectResult;
+        var result = await _api.Delete(characterId.Value) as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
     }
 
-    [TestCase("not-a-guid")]
-    [TestCase("12345")]
-    [TestCase("")]
-    public async Task Return_400_when_deleting_with_invalid_guid(string invalidGuid)
-    {
-        var result = await _api.Delete(invalidGuid) as BadRequestObjectResult;
+}
 
+internal static class JsonPayloadExtensions
+{
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DictionaryKeyPolicy = JsonNamingPolicy.CamelCase
+    };
+
+    public static JsonElement ExtractPayload(this ObjectResult? result)
+    {
         Assert.That(result, Is.Not.Null);
+        var raw = result!.Value switch
+        {
+            string json => json,
+            _ => JsonSerializer.Serialize(result.Value, SerializerOptions)
+        };
+
+        using var document = JsonDocument.Parse(raw);
+        return document.RootElement.Clone();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+﻿using System.Collections.Generic;
+using Domain.Repositories;
 
 namespace Domain;
 
@@ -31,5 +32,10 @@ public class CharacterService(ICharacterRepository repository) : ICharacterServi
     public async Task<bool> Delete(CharacterId characterId)
     {
         return await repository.Delete(characterId);
+    }
+
+    public async Task<IReadOnlyCollection<Character>> List()
+    {
+        return await repository.List();
     }
 }

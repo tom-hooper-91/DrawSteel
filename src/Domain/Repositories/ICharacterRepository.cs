@@ -1,4 +1,6 @@
-﻿namespace Domain.Repositories;
+﻿using System.Collections.Generic;
+
+namespace Domain.Repositories;
 
 public interface ICharacterRepository
 {
@@ -6,4 +8,5 @@ public interface ICharacterRepository
     Task<Character> Get(CharacterId id);
     Task<bool> Update(Character character);
     Task<bool> Delete(CharacterId id);
+    Task<IReadOnlyCollection<Character>> List();
 }

@@ -1,0 +1,11 @@
+{
+  "type": "https://httpstatuses.com/400",
+  "title": "Request validation failed",
+  "status": 400,
+  "detail": "The 'id' field must be a valid GUID.",
+  "errors": {
+    "id": [
+      "The 'id' field must be a valid GUID."
+    ]
+  }
+}

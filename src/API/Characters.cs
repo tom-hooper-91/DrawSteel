@@ -1,4 +1,8 @@
-﻿using System.Text.Json;
+﻿using System;
+using API.Contracts;
+using API.Diagnostics;
+using API.Requests;
+using API.Validation;
 using Application;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +15,19 @@ public class Characters(
     ICreateCharacter createCharacter, 
     IGetCharacter getCharacter,
     IUpdateCharacter updateCharacter,
-    IDeleteCharacter deleteCharacter) : ControllerBase
+    IDeleteCharacter deleteCharacter,
+    IListCharacters listCharacters) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateCharacterCommand command)
+    [CharacterRequestValidator(RequireIdentifier = false, EnsureRouteMatches = false)]
+    public async Task<IActionResult> Create([FromBody] CharacterRequest request)
     {
         try
         {
-            var characterId = await createCharacter.Execute(command);
-            return new OkObjectResult(JsonSerializer.Serialize(characterId));
+            var input = new CreateCharacterInput(request.Name);
+            var characterId = await createCharacter.Execute(input);
+            var response = new CharacterResponse(characterId.Value.ToString(), request.Name);
+            return Ok(response);
         }
         catch
         {
@@ -27,39 +35,48 @@ public class Characters(
         }
     }
 
-    [HttpGet("{characterId}")]
-    public async Task<IActionResult> Get([FromRoute] string characterId)
+    [HttpGet]
+    public async Task<IActionResult> List()
     {
-        var id = new CharacterId(new Guid(characterId));
+        var characters = await listCharacters.Execute();
+        var response = new { items = CharacterContractMapper.ToListItems(characters) };
+        return Ok(response);
+    }
+
+    [HttpGet("{characterId:guid}")]
+    public async Task<IActionResult> Get([FromRoute] Guid characterId)
+    {
+        var id = new CharacterId(characterId);
         var character = await getCharacter.Execute(id);
 
         if (character is null)
             return new NotFoundResult();
 
-        return new OkObjectResult(JsonSerializer.Serialize(character));
+        return Ok(CharacterContractMapper.ToResponse(character));
     }
 
-    [HttpPut("{characterId}")]
-    public async Task<IActionResult> Update([FromRoute] string characterId, [FromBody] UpdateCharacterCommand command)
+    [HttpPut("{characterId:guid}")]
+    [CharacterRequestValidator(RequireIdentifier = true, EnsureRouteMatches = true)]
+    public async Task<IActionResult> Update([FromRoute] Guid characterId, [FromBody] CharacterRequest request)
     {
         try
         {
-            if (!Guid.TryParse(characterId, out var guid))
-                return BadRequest(new { error = "Invalid character ID format", statusCode = 400 });
-            
-            var id = new CharacterId(guid);
-            var updatedCommand = new UpdateCharacterCommand(id, command.Name);
-            
-            var character = await updateCharacter.Execute(updatedCommand);
+            var input = new UpdateCharacterInput(characterId, request.Id, request.Name);
+            var character = await updateCharacter.Execute(input);
             
             if (character is null)
                 return NotFound();
             
-            return Ok(JsonSerializer.Serialize(character));
+            return Ok(CharacterContractMapper.ToResponse(character));
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(new { error = ex.Message, statusCode = 400 });
+            if (string.Equals(ex.ParamName, nameof(UpdateCharacterInput.PayloadId), StringComparison.Ordinal))
+            {
+                return ValidationProblemFactory.InvalidIdentifier(ex.Message).ToResult();
+            }
+
+            return ValidationProblemFactory.InvalidPayload(ex.Message).ToResult();
         }
         catch
         {
@@ -67,18 +84,15 @@ public class Characters(
         }
     }
 
-    [HttpDelete("{characterId}")]
-    public async Task<IActionResult> Delete([FromRoute] string characterId)
+    [HttpDelete("{characterId:guid}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid characterId)
     {
         try
         {
-            if (!Guid.TryParse(characterId, out var guid))
-                return BadRequest(new { error = "Invalid character ID format", statusCode = 400 });
-            
-            var id = new CharacterId(guid);
+            var id = new CharacterId(characterId);
             await deleteCharacter.Execute(id);
             
-            return Ok(new { message = "Character deleted successfully", characterId = id.Value });
+            return Ok(new { message = "Character deleted successfully", characterId = id.Value.ToString() });
         }
         catch
         {

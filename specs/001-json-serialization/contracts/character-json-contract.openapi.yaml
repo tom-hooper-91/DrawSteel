@@ -39,6 +39,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                legacyId:
+                  summary: Legacy identifier payload rejected
+                  value:
+                    title: Request validation failed
+                    status: 400
+                    detail: Legacy identifier payloads are not supported; send 'id' as a string value.
+                    errors:
+                      id:
+                        - Legacy identifier payloads are not supported; send 'id' as a string value.
     get:
       summary: List characters
       tags: [Characters]
@@ -122,6 +132,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
+              examples:
+                mismatchedId:
+                  summary: Route and payload identifier mismatch
+                  value:
+                    title: Request validation failed
+                    status: 400
+                    detail: The 'id' field must match the route identifier.
+                    errors:
+                      id:
+                        - The 'id' field must match the route identifier.
         '404':
           description: Not found
           content:
@@ -135,11 +155,16 @@ paths:
         - $ref: '#/components/parameters/characterId'
       responses:
         '200':
-          description: Idempotent success
+          description: Idempotent success with flattened identifier in response body
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeleteResponse'
+              examples:
+                deleted:
+                  value:
+                    message: Character deleted successfully
+                    characterId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         '400':
           description: Invalid identifier
           content:
@@ -165,7 +190,7 @@ components:
         id:
           type: string
           format: uuid
-          description: Present on update; ignored on create. Must be single string property (no nested `value`).
+          description: Present on update; ignored on create. Must be a flat string property (no nested `value`) and match the `characterId` route parameter on update.
         name:
           type: string
           minLength: 1
@@ -196,6 +221,7 @@ components:
         characterId:
           type: string
           format: uuid
+          description: Flattened identifier echoed to confirm which character was targeted.
     ProblemDetails:
       type: object
       required:

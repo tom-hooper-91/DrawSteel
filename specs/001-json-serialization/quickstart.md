@@ -49,6 +49,11 @@ cd src/API
 dotnet run
 ```
 
+### Verification Log (2025-11-28)
+
+- `dotnet test src/Tests.Unit/Tests.Unit.csproj` → ✅ 45 tests passed, confirming the current baseline before serialization changes.
+- `dotnet test src/Tests.Integration/Tests.Integration.csproj --filter Category=Serialization` → ⚠️ No tests matched the `Category=Serialization` filter yet; new contract-focused tests will need to add this category.
+
 ## Testing Expectations
 
 - **Unit Level**: Verify mapper outputs plain `id` string; ensure validators reject nested `id.value`.

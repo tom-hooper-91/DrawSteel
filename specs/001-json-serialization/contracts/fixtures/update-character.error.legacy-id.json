@@ -1,0 +1,11 @@
+{
+  "type": "https://httpstatuses.com/400",
+  "title": "Request validation failed",
+  "status": 400,
+  "detail": "Legacy identifier payloads are not supported; send 'id' as a string value.",
+  "errors": {
+    "id": [
+      "Legacy identifier payloads are not supported; send 'id' as a string value."
+    ]
+  }
+}

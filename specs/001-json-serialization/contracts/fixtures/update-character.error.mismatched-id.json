@@ -1,0 +1,11 @@
+{
+  "type": "https://httpstatuses.com/400",
+  "title": "Request validation failed",
+  "status": 400,
+  "detail": "The 'id' field must match the route identifier.",
+  "errors": {
+    "id": [
+      "The 'id' field must match the route identifier."
+    ]
+  }
+}

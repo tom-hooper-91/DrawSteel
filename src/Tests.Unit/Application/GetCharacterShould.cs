@@ -9,7 +9,7 @@ public class GetCharacterShould
 {
     [TestCase("Frodo")]
     [TestCase("Sam")]
-    public async Task Call_CharacterService_Get_and_return_a_Character(string name)
+    public async Task Return_character_dto_with_flat_id(string name)
     {
         var characterId = new CharacterId(Guid.NewGuid());
         var service = A.Fake<ICharacterService>();
@@ -17,8 +17,13 @@ public class GetCharacterShould
         var expectedCharacter = new Character(characterId, name);
         A.CallTo(() => service.Get(characterId)).Returns(expectedCharacter);
 
-        var character = await getCharacter.Execute(characterId);
+        var dto = await getCharacter.Execute(characterId);
 
-        Assert.That(character, Is.EqualTo(expectedCharacter));
+        Assert.That(dto, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dto!.Id, Is.EqualTo(characterId.Value.ToString()));
+            Assert.That(dto.Name, Is.EqualTo(name));
+        });
     }
 }

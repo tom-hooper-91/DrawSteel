@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using System.Collections.Generic;
+using Domain;
 using Domain.Repositories;
 using MongoDB.Driver;
 
@@ -32,5 +33,11 @@ public class MongoDbCharacterRepository(IMongoClient client) : ICharacterReposit
         var filter = Builders<Character>.Filter.Eq(c => c.Id, id);
         var result = await Characters.DeleteOneAsync(filter);
         return result.DeletedCount > 0;
+    }
+
+    public async Task<IReadOnlyCollection<Character>> List()
+    {
+        var characters = await Characters.Find(Builders<Character>.Filter.Empty).ToListAsync();
+        return characters;
     }
 }

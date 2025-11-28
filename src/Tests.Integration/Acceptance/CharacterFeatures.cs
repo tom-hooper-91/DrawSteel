@@ -1,5 +1,6 @@
-﻿using System.Text.Json;
-using API;
+﻿using API;
+using API.Contracts;
+using API.Requests;
 using Application;
 using Domain;
 using Infrastructure;
@@ -10,35 +11,39 @@ namespace Tests.Integration.Acceptance;
 [TestFixture]
 public class CharacterFeatures
 {
-    private MongoDbCharacterRepository _repository;
-    private Characters _api;
+    private MongoDbCharacterRepository _repository = null!;
+    private Characters _api = null!;
 
     [SetUp]
-    public void Setup()
+    public async Task Setup()
     {
-        _repository = new MongoDbCharacterRepository(Fixture.Client);
+        _repository = new MongoDbCharacterRepository(CharacterApiFixture.MongoClient);
         var service = new CharacterService(_repository);
         var create = new CreateCharacter(service);
         var get = new GetCharacter(service);
         var update = new UpdateCharacter(service);
         var delete = new DeleteCharacter(service);
-        _api = new Characters(create, get, update, delete);
+        var list = new ListCharacters(service);
+        _api = new Characters(create, get, update, delete, list);
+
+        await CharacterApiFixture.ClearCharactersAsync();
     }
 
     [Test]
     public async Task Create_a_character_in_the_database_and_respond_with_the_characters_id()
     {
-        var frodo = new CreateCharacterCommand("Frodo");
+        var frodo = new CharacterRequest { Name = "Frodo" };
 
         var response = await _api.Create(frodo) as OkObjectResult;
-        var frodoId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
-        var savedCharacter = await _repository.Get(frodoId!);
+        var payload = response?.Value as CharacterResponse;
+        Assert.That(payload, Is.Not.Null, "Create endpoint must return a CharacterResponse payload.");
+
+        var savedCharacter = await _repository.Get(new CharacterId(Guid.Parse(payload!.Id)));
 
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.TypeOf<OkObjectResult>());
-            Assert.That(frodoId, Is.Not.Null);
-            Assert.That(savedCharacter.Id, Is.EqualTo(frodoId));
+            Assert.That(savedCharacter.Id.Value.ToString(), Is.EqualTo(payload.Id));
             Assert.That(savedCharacter.Name, Is.EqualTo(frodo.Name));
         });
     }
@@ -50,14 +55,14 @@ public class CharacterFeatures
         var existingCharacter = new Character(existingCharacterId, "Sam");
         await _repository.Add(existingCharacter);
 
-        var response = await _api.Get(existingCharacterId.ToString()) as OkObjectResult;
-        var returnedCharacter = JsonSerializer.Deserialize<Character>(response!.Value!.ToString()!);
+        var response = await _api.Get(existingCharacterId.Value) as OkObjectResult;
+        var returnedCharacter = response?.Value as CharacterResponse;
 
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.TypeOf<OkObjectResult>());
             Assert.That(returnedCharacter, Is.Not.Null);
-            Assert.That(returnedCharacter!.Id, Is.EqualTo(existingCharacterId));
+            Assert.That(Guid.Parse(returnedCharacter!.Id), Is.EqualTo(existingCharacterId.Value));
             Assert.That(returnedCharacter.Name, Is.EqualTo(existingCharacter.Name));
         });
     }
