@@ -1,0 +1,221 @@
+openapi: 3.0.3
+info:
+  title: Character JSON Contract
+  description: Flattened identifier contract for Character API requests and responses
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+    description: Local development
+paths:
+  /api/characters:
+    post:
+      summary: Create character
+      tags: [Characters]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterRequest'
+            examples:
+              create:
+                value:
+                  name: "Aragorn"
+      responses:
+        '200':
+          description: Character created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+              examples:
+                created:
+                  value:
+                    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    name: "Aragorn"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    get:
+      summary: List characters
+      tags: [Characters]
+      responses:
+        '200':
+          description: Collection of characters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CharacterListItem'
+              examples:
+                list:
+                  value:
+                    items:
+                      - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        name: "Aragorn"
+                      - id: "7b9c46e3-0f3c-45cb-9e7f-4c5238b3b2bc"
+                        name: "Legolas"
+
+  /api/characters/{characterId}:
+    get:
+      summary: Retrieve character
+      tags: [Characters]
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      responses:
+        '200':
+          description: Character found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+              examples:
+                success:
+                  value:
+                    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    name: "Aragorn"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '400':
+          description: Invalid identifier format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    put:
+      summary: Update character
+      tags: [Characters]
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterRequest'
+            examples:
+              update:
+                value:
+                  id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                  name: "Strider"
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CharacterResponse'
+        '400':
+          description: Validation error (bad GUID, id mismatch, legacy payload)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    delete:
+      summary: Delete character
+      tags: [Characters]
+      parameters:
+        - $ref: '#/components/parameters/characterId'
+      responses:
+        '200':
+          description: Idempotent success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '400':
+          description: Invalid identifier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+components:
+  parameters:
+    characterId:
+      name: characterId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: GUID identifying the character. Must match flattened `id` schema.
+  schemas:
+    CharacterRequest:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Present on update; ignored on create. Must be single string property (no nested `value`).
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+    CharacterResponse:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    CharacterListItem:
+      allOf:
+        - $ref: '#/components/schemas/CharacterResponse'
+    DeleteResponse:
+      type: object
+      required:
+        - message
+        - characterId
+      properties:
+        message:
+          type: string
+          example: Character deleted successfully
+        characterId:
+          type: string
+          format: uuid
+    ProblemDetails:
+      type: object
+      required:
+        - title
+        - status
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: Field-specific validation issues (e.g., `id` contains legacy `value`).
