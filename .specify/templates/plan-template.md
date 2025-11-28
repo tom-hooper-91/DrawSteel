@@ -35,6 +35,7 @@
 - [ ] **Testing Standards**: NUnit, FakeItEasy, and Testcontainers planned for appropriate test levels
 - [ ] **Test Pyramid**: Unit tests dominate, integration tests moderate, E2E minimal (critical paths only)
 - [ ] **Clean Code & SOLID**: Design respects single responsibility, dependency inversion, and clear interfaces
+- [ ] **Simplicity & Ruthless Deletion**: Identify code/assets to remove, and justify any unavoidable net-new complexity
 - [ ] **Minimal Dependencies**: New dependencies justified and well-maintained
 - [ ] **IaC Compliance**: Infrastructure changes use Terraform with azurerm provider (azapi only if required)
 - [ ] **CI/CD**: GitHub Actions workflow planned for testing, build, and deployment gates

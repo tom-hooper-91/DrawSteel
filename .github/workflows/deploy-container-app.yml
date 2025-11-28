@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - 'infra/**'
       - '.github/**'
+      - '.specify/**'
       - 'docker-compose.yml'
       - 'psakefile.ps1'
       - 'README.md'

@@ -1,37 +1,25 @@
 <!--
   SYNC IMPACT REPORT
   ==================
-  Version Change: 1.0.1 → 1.0.2
-  Date: 2025-10-31
+  Version Change: 1.0.2 → 2.0.0
+  Date: 2025-11-28
   
   Modified Principles:
-  - I. Clean Code & SOLID Principles: Expanded "Comments explain WHY, not WHAT" with concrete anti-patterns and examples
+  - II. Extreme Programming (XP) Practices → II. Simplicity & Ruthless Deletion
   
   Added Sections:
-  - Comment Anti-Patterns subsection with specific violations to avoid
-  - Acceptable Comment Examples demonstrating proper WHY comments
+  - Simplicity Enforcement Checklist within Principle II
   
-  Removed Sections: None
+  Removed Sections:
+  - XP practice requirements (TDD, CI, Pair Programming, Simple Design, Collective Ownership, Sustainable Pace)
   
-  Enhancements:
-  - Added explicit prohibition of task tracking comments (// T001, // TODO: T022, etc.)
-  - Added explicit prohibition of obvious operation descriptions
-  - Added explicit prohibition of Arrange-Act-Assert comments (already evident from code structure)
-  - Added concrete C# examples of forbidden vs. acceptable comment patterns
-  - Clarified that git commit messages are the proper place for task tracking
+  Templates Requiring Updates:
+  - ✅ .specify/templates/plan-template.md (Constitution Check now enforces simplicity gate)
+  - ✅ .specify/templates/tasks-template.md (Task guidance emphasizes deletion-first mindset)
+  - ⚠ .specify/templates/commands/ (directory absent; confirm whether command guidance must be restored)
   
-  Rationale for Amendment:
-  Lesson learned from 001-character-api implementation where 50+ constitution-violating comments
-  were systematically added throughout the codebase (all production and test files), requiring
-  full remediation. This amendment makes the "Comments explain WHY, not WHAT" principle
-  enforceable with specific, recognizable anti-patterns.
-  
-  Template Alignment Status:
-  ✅ plan-template.md - No changes required (constitution gates still apply)
-  ✅ spec-template.md - No changes required
-  ✅ tasks-template.md - No changes required (tasks already documented in proper location)
-  
-  Follow-up TODOs: None
+  Follow-up TODOs:
+  - TODO(CONFIRM_COMMAND_TEMPLATES): Determine if `.specify/templates/commands/` should exist or if this requirement can be dropped from future amendments.
 -->
 
 # Draw Steel Constitution
@@ -58,14 +46,17 @@ All code MUST adhere to clean code practices and SOLID principles:
 The following comment patterns are **explicit violations** of this principle:
 
 ❌ **Task Tracking Comments**
+
 ```csharp
 // T022: Implement Update method
 // TODO: T015 - Add validation
 public async Task<Character?> Update(CharacterId id, string name)
 ```
+
 **Why forbidden**: Task tracking belongs in git commit messages, not source code. Use: `git commit -m "T022: Implement CharacterService.Update method"`
 
 ❌ **Obvious Operation Descriptions**
+
 ```csharp
 // Validate GUID format
 if (!Guid.TryParse(id, out _))
@@ -78,9 +69,11 @@ if (character is null)
 // Return the character
 return character;
 ```
+
 **Why forbidden**: These comments describe WHAT the code obviously does. Clear code structure and naming make these comments redundant noise.
 
 ❌ **Test Structure Comments**
+
 ```csharp
 [Test]
 public async Task Return_character_when_found()
@@ -95,9 +88,11 @@ public async Task Return_character_when_found()
     Assert.That(result, Is.Not.Null);
 }
 ```
+
 **Why forbidden**: The Arrange-Act-Assert pattern should be self-evident from code organization (blank lines between sections, clear variable names). These comments are visual clutter.
 
 ❌ **Redundant Implementation Comments**
+
 ```csharp
 // Create a new character instance
 var character = new Character(characterId, name);
@@ -108,11 +103,13 @@ await _repository.Save(character);
 // Return the saved character
 return character;
 ```
+
 **Why forbidden**: The code already says exactly what it does. These comments add zero value.
 
 #### Acceptable Comment Examples (WHY, Not WHAT)
 
 ✅ **Non-Obvious Technical Decisions**
+
 ```csharp
 // MongoDB ReplaceOneAsync returns MatchedCount=1 even when document content is identical
 // We rely on this to distinguish "found" vs "not found" rather than "changed" vs "unchanged"
@@ -120,6 +117,7 @@ return result.MatchedCount > 0;
 ```
 
 ✅ **Business Rule Rationale**
+
 ```csharp
 // Idempotent delete: Always return 200 even if already deleted to avoid client confusion
 // about whether the resource state is correct (it is - the resource doesn't exist)
@@ -127,6 +125,7 @@ return new OkResult();
 ```
 
 ✅ **API Design Decisions**
+
 ```csharp
 // ArgumentException from domain layer maps to 400 Bad Request per REST conventions
 // Business rule violations are client errors, not server errors
@@ -137,6 +136,7 @@ catch (ArgumentException ex)
 ```
 
 ✅ **Performance or Security Considerations**
+
 ```csharp
 // Eagerly load relationships to avoid N+1 query problem with lazy loading
 var characters = await _context.Characters
@@ -147,19 +147,25 @@ var characters = await _context.Characters
 
 **Summary**: If removing the comment would make a reviewer ask "Why did they do it this way?", it's a good comment. If removing the comment changes nothing because the code already explains itself, delete the comment.
 
-### II. Extreme Programming (XP) Practices
+### II. Simplicity & Ruthless Deletion
 
-Development MUST follow XP core practices:
+Always favor the smallest viable solution and delete code at every opportunity:
 
-- **Test-Driven Development (TDD)**: Tests written first, code written to pass tests (see Principle IV)
-- **Continuous Integration**: Frequent integration with automated builds and tests
-- **Refactoring**: Continuous code improvement without changing behavior
-- **Pair Programming**: Encouraged for complex features and knowledge sharing
-- **Simple Design**: Simplest solution that works, avoiding over-engineering (YAGNI)
-- **Collective Code Ownership**: Any team member can improve any part of the codebase
-- **Sustainable Pace**: Maintain quality and avoid burnout
+- **Start by removing**: Before writing new code, delete or consolidate dead, duplicate, or low-value code paths related to the change.
+- **Bias toward primitives**: Prefer straightforward data structures and synchronous flows until a measurable requirement demands more complexity.
+- **No speculative abstractions**: Interfaces, patterns, feature toggles, and extension points require at least two proven consumers or documented evidence that duplication costs more than the added indirection.
+- **Every addition needs a deletion**: Pull requests MUST call out what was removed or simplified; if nothing can be removed, reviewers demand justification explaining why.
+- **Dependency diet**: New packages or services are prohibited when an existing library/standard API satisfies the requirement. Removing obsolete dependencies is mandatory work, not backlog.
+- **Sunset plans**: Temporary code (flags, migrations, compatibility layers) MUST include removal criteria, owner, and target date in the plan/tasks.
 
-**Rationale**: XP practices reduce risk, improve quality, and enable rapid response to changing requirements while maintaining team productivity.
+#### Simplicity Enforcement Checklist
+
+- Can the requirement be met by configuration, documentation, or process instead of code? If yes, code changes are blocked.
+- Does the change reduce total abstractions, files, or branches? If not, rewrite until it does or document an explicit exception.
+- Is there a net negative diff in lines of code across the affected layer? If not, provide concrete reasoning for the additional surface area.
+- Were unused endpoints, DTOs, or repositories evaluated for deletion as part of this change? Evidence of the review MUST appear in the plan/tasks.
+
+**Rationale**: Smaller systems cost less to comprehend, review, and secure. Ruthless deletion keeps the Interaction-Driven Design architecture lean so that new contributors can ship features quickly without navigating abandoned scaffolding.
 
 ### III. Interaction-Driven Design (IDD) Architecture
 
@@ -356,4 +362,4 @@ Constitution follows semantic versioning:
 
 This constitution evolves with the project. As we learn and grow, principles may be refined, but the core commitment to quality, testability, and maintainability remains constant.
 
-**Version**: 1.0.2 | **Ratified**: 2025-10-31 | **Last Amended**: 2025-10-31
+**Version**: 2.0.0 | **Ratified**: 2025-10-31 | **Last Amended**: 2025-11-28

@@ -14,6 +14,8 @@ description: "Task list template for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
+**Simplicity Rule**: Every story backlog MUST note what gets deleted or simplified. Add explicit tasks for removing unused code, dependencies, or configuration whenever you add functionality.
+
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
