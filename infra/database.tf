@@ -5,7 +5,7 @@ resource "azurerm_cosmosdb_account" "main" {
   offer_type           = "Standard"
   kind                 = "MongoDB"
   free_tier_enabled    = true
-  mongo_server_version = "4.0"
+  mongo_server_version = "4.2"
 
   #   capabilities {
   #     name = "EnableAggregationPipeline"
@@ -14,10 +14,6 @@ resource "azurerm_cosmosdb_account" "main" {
   #   capabilities {
   #     name = "mongoEnableDocLevelTTL"
   #   }
-
-  capabilities {
-    name = "MongoDBv3.4"
-  }
 
   capabilities {
     name = "EnableMongo"
