@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Integration", "Tests.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{0C23FA47-301A-4EC5-B987-2F924A33C19B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{D7C3CD00-8DBF-419E-BED0-C397739FCE5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,5 +53,9 @@ Global
 		{0C23FA47-301A-4EC5-B987-2F924A33C19B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C23FA47-301A-4EC5-B987-2F924A33C19B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C23FA47-301A-4EC5-B987-2F924A33C19B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7C3CD00-8DBF-419E-BED0-C397739FCE5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7C3CD00-8DBF-419E-BED0-C397739FCE5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7C3CD00-8DBF-419E-BED0-C397739FCE5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7C3CD00-8DBF-419E-BED0-C397739FCE5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
