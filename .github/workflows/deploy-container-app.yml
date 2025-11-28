@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths-ignore:
       - 'infra/**'
+      - '.github/**'
       - 'docker-compose.yml'
       - 'psakefile.ps1'
       - 'README.md'
