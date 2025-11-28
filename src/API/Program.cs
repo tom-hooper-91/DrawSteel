@@ -12,9 +12,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddScoped<ICreateCharacter, CreateCharacter>()
+    .AddScoped<IGetCharacter, GetCharacter>()
+    .AddScoped<IUpdateCharacter, UpdateCharacter>()
+    .AddScoped<IDeleteCharacter, DeleteCharacter>()
     .AddScoped<ICharacterService, CharacterService>()
     .AddScoped<ICharacterRepository, MongoDbCharacterRepository>()
-    .AddScoped<IGetCharacter, GetCharacter>()
     .AddControllers();
 
 var configuration = new ConfigurationBuilder()

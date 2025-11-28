@@ -1,28 +1,35 @@
 <!--
   SYNC IMPACT REPORT
   ==================
-  Version Change: 1.0.0 → 1.0.1
+  Version Change: 1.0.1 → 1.0.2
   Date: 2025-10-31
   
   Modified Principles:
-  - IV. Testing Standards: Clarified test naming conventions and structure requirements
-  - VI. Infrastructure as Code: Removed immutable infrastructure requirement
+  - I. Clean Code & SOLID Principles: Expanded "Comments explain WHY, not WHAT" with concrete anti-patterns and examples
   
-  Added Sections: None
+  Added Sections:
+  - Comment Anti-Patterns subsection with specific violations to avoid
+  - Acceptable Comment Examples demonstrating proper WHY comments
   
   Removed Sections: None
   
-  Clarifications:
-  - Test class naming: <ClassUnderTest>Should (e.g., CharacterServiceShould)
-  - Test method naming: Capital_snake_case describing outcome, not conditions
-  - Removed Arrange-Act-Assert comment requirement (pattern should be evident from code)
-  - API technology corrected: ASP.NET Core Web API (not Azure Functions)
-  - Removed infrastructure immutability requirement from IaC principle
+  Enhancements:
+  - Added explicit prohibition of task tracking comments (// T001, // TODO: T022, etc.)
+  - Added explicit prohibition of obvious operation descriptions
+  - Added explicit prohibition of Arrange-Act-Assert comments (already evident from code structure)
+  - Added concrete C# examples of forbidden vs. acceptable comment patterns
+  - Clarified that git commit messages are the proper place for task tracking
+  
+  Rationale for Amendment:
+  Lesson learned from 001-character-api implementation where 50+ constitution-violating comments
+  were systematically added throughout the codebase (all production and test files), requiring
+  full remediation. This amendment makes the "Comments explain WHY, not WHAT" principle
+  enforceable with specific, recognizable anti-patterns.
   
   Template Alignment Status:
-  ✅ plan-template.md - No changes required (general constitution gates still valid)
+  ✅ plan-template.md - No changes required (constitution gates still apply)
   ✅ spec-template.md - No changes required
-  ✅ tasks-template.md - Test naming conventions now clarified
+  ✅ tasks-template.md - No changes required (tasks already documented in proper location)
   
   Follow-up TODOs: None
 -->
@@ -42,9 +49,103 @@ All code MUST adhere to clean code practices and SOLID principles:
 - **Dependency Inversion Principle**: Depend on abstractions, not concretions
 - Code MUST be self-documenting with clear naming and intent
 - Functions/methods MUST be small, focused, and do one thing well
-- Comments explain WHY, not WHAT (code explains what)
+- **Comments explain WHY, not WHAT** (code explains what)
 
 **Rationale**: SOLID principles ensure maintainable, testable, and extensible code that can evolve without breaking existing functionality.
+
+#### Comment Anti-Patterns (FORBIDDEN)
+
+The following comment patterns are **explicit violations** of this principle:
+
+❌ **Task Tracking Comments**
+```csharp
+// T022: Implement Update method
+// TODO: T015 - Add validation
+public async Task<Character?> Update(CharacterId id, string name)
+```
+**Why forbidden**: Task tracking belongs in git commit messages, not source code. Use: `git commit -m "T022: Implement CharacterService.Update method"`
+
+❌ **Obvious Operation Descriptions**
+```csharp
+// Validate GUID format
+if (!Guid.TryParse(id, out _))
+    return new BadRequestObjectResult("Invalid ID format");
+
+// Null means not found
+if (character is null)
+    return new NotFoundResult();
+
+// Return the character
+return character;
+```
+**Why forbidden**: These comments describe WHAT the code obviously does. Clear code structure and naming make these comments redundant noise.
+
+❌ **Test Structure Comments**
+```csharp
+[Test]
+public async Task Return_character_when_found()
+{
+    // Arrange
+    var characterId = new CharacterId(Guid.NewGuid());
+    
+    // Act
+    var result = await _service.Get(characterId);
+    
+    // Assert
+    Assert.That(result, Is.Not.Null);
+}
+```
+**Why forbidden**: The Arrange-Act-Assert pattern should be self-evident from code organization (blank lines between sections, clear variable names). These comments are visual clutter.
+
+❌ **Redundant Implementation Comments**
+```csharp
+// Create a new character instance
+var character = new Character(characterId, name);
+
+// Save to repository
+await _repository.Save(character);
+
+// Return the saved character
+return character;
+```
+**Why forbidden**: The code already says exactly what it does. These comments add zero value.
+
+#### Acceptable Comment Examples (WHY, Not WHAT)
+
+✅ **Non-Obvious Technical Decisions**
+```csharp
+// MongoDB ReplaceOneAsync returns MatchedCount=1 even when document content is identical
+// We rely on this to distinguish "found" vs "not found" rather than "changed" vs "unchanged"
+return result.MatchedCount > 0;
+```
+
+✅ **Business Rule Rationale**
+```csharp
+// Idempotent delete: Always return 200 even if already deleted to avoid client confusion
+// about whether the resource state is correct (it is - the resource doesn't exist)
+return new OkResult();
+```
+
+✅ **API Design Decisions**
+```csharp
+// ArgumentException from domain layer maps to 400 Bad Request per REST conventions
+// Business rule violations are client errors, not server errors
+catch (ArgumentException ex)
+{
+    return new BadRequestObjectResult(ex.Message);
+}
+```
+
+✅ **Performance or Security Considerations**
+```csharp
+// Eagerly load relationships to avoid N+1 query problem with lazy loading
+var characters = await _context.Characters
+    .Include(c => c.Abilities)
+    .Include(c => c.Equipment)
+    .ToListAsync();
+```
+
+**Summary**: If removing the comment would make a reviewer ask "Why did they do it this way?", it's a good comment. If removing the comment changes nothing because the code already explains itself, delete the comment.
 
 ### II. Extreme Programming (XP) Practices
 
@@ -255,4 +356,4 @@ Constitution follows semantic versioning:
 
 This constitution evolves with the project. As we learn and grow, principles may be refined, but the core commitment to quality, testability, and maintainability remains constant.
 
-**Version**: 1.0.1 | **Ratified**: 2025-10-31 | **Last Amended**: 2025-10-31
+**Version**: 1.0.2 | **Ratified**: 2025-10-31 | **Last Amended**: 2025-10-31
