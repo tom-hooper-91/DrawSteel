@@ -4,10 +4,14 @@ namespace Domain;
 
 public class CharacterService(ICharacterRepository repository) : ICharacterService
 {
-    public async Task<CharacterId> Create(CreateCharacterCommand character)
+    public async Task<CharacterId> Create(CreateCharacterCommand command)
     {
-        var newCharacterId = new CharacterId(Guid.NewGuid());
-        var newCharacter = new Character(newCharacterId, character.Name);
+        var newCharacterId = new CharacterId(Guid.NewGuid()); // version 7 
+        var newCharacter = new Character(newCharacterId, command.Name); 
+        // call character factory here
+        // ICharacterFactory
+        // WarriorFactory
+        // MageFactory
 
         return await repository.Add(newCharacter);
     }

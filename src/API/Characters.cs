@@ -14,11 +14,11 @@ public class Characters(
     IDeleteCharacter deleteCharacter) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateCharacterCommand command)
+    public async Task<IActionResult> Create([FromBody] CreateCharacterRequest request)
     {
         try
         {
-            var characterId = await createCharacter.Execute(command);
+            var characterId = await createCharacter.Execute(request);
             return new OkObjectResult(JsonSerializer.Serialize(characterId));
         }
         catch

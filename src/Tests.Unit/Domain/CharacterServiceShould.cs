@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application;
+using Domain;
 using Domain.Repositories;
 using FakeItEasy;
 
@@ -26,7 +27,7 @@ public class CharacterServiceShould
         A.CallTo(() => _repository.Add(A<Character>.That.Matches(c => c.Name.Equals(character.Name))))
             .Returns(Task.FromResult(expectedId));
 
-        var characterId = await _service.Create(new CreateCharacterCommand(name));
+        var characterId = await _service.Create(new CreateCharacterCommand(name, A<CharacterClass>._));
 
         Assert.That(characterId, Is.EqualTo(expectedId));
     }

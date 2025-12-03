@@ -29,7 +29,7 @@ public class UpdateCharacterTests
     [TestCase("Sam", "Samwise Gamgee")]
     public async Task Update_character_name_successfully(string originalName, string newName)
     {
-        var createCommand = new CreateCharacterCommand(originalName);
+        var createCommand = new CreateCharacterRequest(originalName);
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
@@ -60,7 +60,7 @@ public class UpdateCharacterTests
     [Test]
     public async Task Persist_update_across_get_requests()
     {
-        var createCommand = new CreateCharacterCommand("Gandalf");
+        var createCommand = new CreateCharacterRequest("Gandalf");
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
@@ -81,7 +81,7 @@ public class UpdateCharacterTests
     [Test]
     public async Task Return_404_when_updating_deleted_character()
     {
-        var createCommand = new CreateCharacterCommand("Theoden");
+        var createCommand = new CreateCharacterRequest("Theoden");
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
@@ -98,7 +98,7 @@ public class UpdateCharacterTests
     [TestCase("   ")]
     public async Task Return_400_when_empty_name_provided(string emptyName)
     {
-        var createCommand = new CreateCharacterCommand("Eowyn");
+        var createCommand = new CreateCharacterRequest("Eowyn");
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 

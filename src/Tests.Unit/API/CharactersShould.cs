@@ -31,7 +31,7 @@ public class CharactersShould
     [TestCase("Sam")]
     public async Task Return_serialised_characterId_on_post(string name)
     {
-        var newCharacter = new CreateCharacterCommand(name);
+        var newCharacter = new CreateCharacterRequest(name, CharacterClass.Warrior);
         var expectedCharacterId = new CharacterId(Guid.NewGuid());
         A.CallTo(() => _createCharacter.Execute(newCharacter)).Returns(expectedCharacterId);
 
@@ -45,7 +45,7 @@ public class CharactersShould
     [Test]
     public async Task Return_bad_request_when_CreateCharacter_throws()
     {
-        var badCharacter = new CreateCharacterCommand("Something broken");
+        var badCharacter = new CreateCharacterRequest("Something broken", A<CharacterClass>._);
         A.CallTo(() => _createCharacter.Execute(badCharacter)).Throws(new Exception("This went wrong"));
 
         var response = await _api.Create(badCharacter) as ObjectResult;

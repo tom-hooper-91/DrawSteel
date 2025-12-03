@@ -2,7 +2,7 @@
 
 public interface ICharacterService
 {
-    Task<CharacterId> Create(CreateCharacterCommand character);
+    Task<CharacterId> Create(CreateCharacterCommand command);
     Task<Character?> Get(CharacterId characterId);
     Task<Character?> Update(UpdateCharacterCommand command);
     Task<bool> Delete(CharacterId characterId);
