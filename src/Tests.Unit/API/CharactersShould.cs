@@ -45,7 +45,7 @@ public class CharactersShould
     [Test]
     public async Task Return_bad_request_when_CreateCharacter_throws()
     {
-        var badCharacter = new CreateCharacterRequest("Something broken", A<CharacterClass>._);
+        var badCharacter = new CreateCharacterRequest("Something broken", CharacterClass.Warrior);
         A.CallTo(() => _createCharacter.Execute(badCharacter)).Throws(new Exception("This went wrong"));
 
         var response = await _api.Create(badCharacter) as ObjectResult;

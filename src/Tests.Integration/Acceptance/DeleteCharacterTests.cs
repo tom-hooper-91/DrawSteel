@@ -28,7 +28,7 @@ public class DeleteCharacterTests
     [Test]
     public async Task Delete_character_successfully()
     {
-        var createCommand = new CreateCharacterRequest("Boromir");
+        var createCommand = new CreateCharacterRequest("Boromir", CharacterClass.Warrior);
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
@@ -40,7 +40,7 @@ public class DeleteCharacterTests
     [Test]
     public async Task Character_not_retrievable_after_delete()
     {
-        var createCommand = new CreateCharacterRequest("Saruman");
+        var createCommand = new CreateCharacterRequest("Saruman", CharacterClass.Warrior);
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
@@ -54,7 +54,7 @@ public class DeleteCharacterTests
     [Test]
     public async Task Delete_returns_success_when_already_deleted()
     {
-        var createCommand = new CreateCharacterRequest("Gollum");
+        var createCommand = new CreateCharacterRequest("Gollum", CharacterClass.Warrior);
         var createResponse = await _api.Create(createCommand) as OkObjectResult;
         var characterId = JsonSerializer.Deserialize<CharacterId>(createResponse!.Value!.ToString()!);
 
