@@ -2,6 +2,13 @@
 
 public enum CharacterClass
 {
-    Warrior,
-    Gardener
+    Censor,
+    Conduit,
+    Elementalist,
+    Fury,
+    Null,
+    Shadow,
+    Tactician,
+    Talent,
+    Troubadour
 }

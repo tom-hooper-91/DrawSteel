@@ -27,7 +27,7 @@ public class CharacterServiceShould
         A.CallTo(() => _repository.Add(A<Character>.That.Matches(c => c.Name.Equals(character.Name))))
             .Returns(Task.FromResult(expectedId));
 
-        var characterId = await _service.Create(new CreateCharacterCommand(name, CharacterClass.Warrior));
+        var characterId = await _service.Create(new CreateCharacterCommand(name, CharacterClass.Tactician));
 
         Assert.That(characterId, Is.EqualTo(expectedId));
     }

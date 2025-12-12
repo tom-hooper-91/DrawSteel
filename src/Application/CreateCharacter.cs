@@ -8,8 +8,8 @@ public class CreateCharacter(ICharacterService characterService) : ICreateCharac
     {
         CreateCharacterCommand command = request.characterClass switch
         {
-            CharacterClass.Warrior => new CreateWarriorCommand(request.Name),
-            CharacterClass.Gardener => new CreateGardenerCommand(request.Name),
+            CharacterClass.Tactician => new CreateTacticianCommand(request.Name),
+            CharacterClass.Fury => new CreateFuryCommand(request.Name),
             _ => throw new ArgumentException("Invalid character class", nameof(request.characterClass))
         };
 

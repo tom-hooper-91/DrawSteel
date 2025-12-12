@@ -6,7 +6,7 @@ public class CharacterService(ICharacterRepository repository) : ICharacterServi
 {
     public async Task<CharacterId> Create(CreateCharacterCommand command)
     {
-        var newCharacterId = new CharacterId(Guid.NewGuid()); // version 7 
+        var newCharacterId = new CharacterId(Guid.CreateVersion7());
         var newCharacter = new Character(newCharacterId, command.Name); 
         // call character factory here
         // ICharacterFactory

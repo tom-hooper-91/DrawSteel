@@ -36,11 +36,11 @@ public class CreateCharacterShould
     {
         yield return new TestCaseData(
             "Frodo", 
-            CharacterClass.Warrior, 
-            (Func<string, CreateCharacterCommand>)(name => new CreateWarriorCommand(name)));
+            CharacterClass.Tactician, 
+            (Func<string, CreateCharacterCommand>)(name => new CreateTacticianCommand(name)));
         yield return new TestCaseData(
             "Sam", 
-            CharacterClass.Gardener, 
-            (Func<string, CreateCharacterCommand>)(name => new CreateGardenerCommand(name)));
+            CharacterClass.Fury, 
+            (Func<string, CreateCharacterCommand>)(name => new CreateFuryCommand(name)));
     }
 }

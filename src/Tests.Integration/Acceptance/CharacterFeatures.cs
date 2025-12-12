@@ -29,7 +29,7 @@ public class CharacterFeatures
     [Test]
     public async Task Create_a_character_in_the_database_and_respond_with_the_characters_id()
     {
-        var frodo = new CreateCharacterRequest("Frodo", CharacterClass.Warrior);
+        var frodo = new CreateCharacterRequest("Frodo", CharacterClass.Tactician);
 
         var response = await _api.Create(frodo) as OkObjectResult;
         var frodoId = JsonSerializer.Deserialize<CharacterId>(response!.Value!.ToString()!);
