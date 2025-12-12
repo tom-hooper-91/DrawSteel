@@ -2,7 +2,10 @@ using Application;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using Domain;
 using Domain.Repositories;
+using HealthChecks.MongoDb;
 using Infrastructure;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -72,8 +75,18 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
-builder.ConfigureDatabase(configuration.GetConnectionString("MongoDB") ??
-                          configuration["MONGODB_CONNECTION_STRING"]);
+var mongoConnectionString = configuration.GetConnectionString("MongoDB") ??
+                           configuration["MONGODB_CONNECTION_STRING"];
+
+builder.ConfigureDatabase(mongoConnectionString);
+
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddMongoDb(
+        mongodbConnectionString: mongoConnectionString!,
+        name: "mongodb",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: ["ready"]);
 
 var app = builder.Build();
 
@@ -86,5 +99,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
+// Health check endpoints
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false // Liveness: just checks if the app is running
+});
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready") // Readiness: checks dependencies like MongoDB
+});
+
 // app.UseExceptionHandler("/error");
 await app.RunAsync();

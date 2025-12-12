@@ -82,7 +82,18 @@ jobs:
             username: ${{ vars.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+        - name: Get current revision (for rollback)
+          id: get-revision
+          run: |
+            CURRENT_REVISION=$(az containerapp revision list \
+              --name ${{ vars.CONTAINER_APP_NAME }} \
+              --resource-group ${{ vars.RESOURCE_GROUP_NAME }} \
+              --query "[?properties.active && properties.trafficWeight > 0].name | [0]" -o tsv)
+            echo "current_revision=$CURRENT_REVISION" >> $GITHUB_OUTPUT
+            echo "Current active revision: $CURRENT_REVISION"
+
         - name: Deploy Container App
+          id: deploy
           uses: azure/container-apps-deploy-action@v2
           with:
             appSourcePath: ${{ github.workspace }}/src
@@ -94,3 +105,72 @@ jobs:
             resourceGroup: ${{ vars.RESOURCE_GROUP_NAME }}
             imageToBuild: thooper91/draw-steel-api:${{ github.sha }}
             dockerfilePath: API/Dockerfile
+
+        - name: Wait for revision to be ready
+          id: wait-ready
+          run: |
+            echo "Waiting for new revision to become ready..."
+            MAX_ATTEMPTS=30
+            ATTEMPT=0
+            
+            while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+              REVISION_STATUS=$(az containerapp revision list \
+                --name ${{ vars.CONTAINER_APP_NAME }} \
+                --resource-group ${{ vars.RESOURCE_GROUP_NAME }} \
+                --query "[0].properties.runningState" -o tsv)
+              
+              echo "Attempt $((ATTEMPT + 1))/$MAX_ATTEMPTS: Revision status is '$REVISION_STATUS'"
+              
+              if [ "$REVISION_STATUS" == "Running" ]; then
+                echo "Revision is running successfully!"
+                echo "status=success" >> $GITHUB_OUTPUT
+                exit 0
+              elif [ "$REVISION_STATUS" == "Failed" ] || [ "$REVISION_STATUS" == "Degraded" ]; then
+                echo "Revision failed to start with status: $REVISION_STATUS"
+                echo "status=failed" >> $GITHUB_OUTPUT
+                exit 1
+              fi
+              
+              ATTEMPT=$((ATTEMPT + 1))
+              sleep 10
+            done
+            
+            echo "Timeout waiting for revision to be ready"
+            echo "status=timeout" >> $GITHUB_OUTPUT
+            exit 1
+
+        - name: Rollback on failure
+          if: failure() && steps.get-revision.outputs.current_revision != ''
+          run: |
+            echo "Deployment failed, rolling back to previous revision: ${{ steps.get-revision.outputs.current_revision }}"
+            
+            # Get the failed revision name
+            FAILED_REVISION=$(az containerapp revision list \
+              --name ${{ vars.CONTAINER_APP_NAME }} \
+              --resource-group ${{ vars.RESOURCE_GROUP_NAME }} \
+              --query "[0].name" -o tsv)
+            
+            # Deactivate the failed revision
+            if [ -n "$FAILED_REVISION" ] && [ "$FAILED_REVISION" != "${{ steps.get-revision.outputs.current_revision }}" ]; then
+              echo "Deactivating failed revision: $FAILED_REVISION"
+              az containerapp revision deactivate \
+                --name ${{ vars.CONTAINER_APP_NAME }} \
+                --resource-group ${{ vars.RESOURCE_GROUP_NAME }} \
+                --revision "$FAILED_REVISION" || true
+            fi
+            
+            # Activate the previous revision
+            echo "Activating previous revision: ${{ steps.get-revision.outputs.current_revision }}"
+            az containerapp revision activate \
+              --name ${{ vars.CONTAINER_APP_NAME }} \
+              --resource-group ${{ vars.RESOURCE_GROUP_NAME }} \
+              --revision "${{ steps.get-revision.outputs.current_revision }}"
+            
+            # Route all traffic to the previous revision
+            az containerapp ingress traffic set \
+              --name ${{ vars.CONTAINER_APP_NAME }} \
+              --resource-group ${{ vars.RESOURCE_GROUP_NAME }} \
+              --revision-weight "${{ steps.get-revision.outputs.current_revision }}=100"
+            
+            echo "Rollback completed successfully"
+            exit 1

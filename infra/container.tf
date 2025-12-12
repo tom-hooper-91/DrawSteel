@@ -54,6 +54,38 @@ resource "azurerm_container_app" "main" {
         name  = "OTEL_SERVICE_NAME"
         value = "DrawSteel.API"
       }
+
+      # Startup probe - gives container time to start before other probes kick in
+      startup_probe {
+        transport = "HTTP"
+        path      = "/health/live"
+        port      = 8080
+        # Allows up to 30 * 10 = 300 seconds (5 minutes) for the container to start
+        failure_count_threshold = 30
+        interval_seconds        = 10
+        timeout                 = 5
+      }
+
+      # Liveness probe - checks if the container is still running
+      liveness_probe {
+        transport               = "HTTP"
+        path                    = "/health/live"
+        port                    = 8080
+        failure_count_threshold = 3
+        interval_seconds        = 30
+        timeout                 = 5
+      }
+
+      # Readiness probe - checks if the container can accept traffic
+      readiness_probe {
+        transport               = "HTTP"
+        path                    = "/health/ready"
+        port                    = 8080
+        failure_count_threshold = 3
+        success_count_threshold = 1
+        interval_seconds        = 10
+        timeout                 = 5
+      }
     }
   }
 
