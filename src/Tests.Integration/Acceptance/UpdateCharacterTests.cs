@@ -4,6 +4,7 @@ using Application;
 using Domain;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Tests.Integration.Acceptance;
 
@@ -22,7 +23,7 @@ public class UpdateCharacterTests
         var get = new GetCharacter(service);
         var update = new UpdateCharacter(service);
         var delete = new DeleteCharacter(service);
-        _api = new Characters(create, get, update, delete);
+        _api = new Characters(create, get, update, delete, NullLogger<Characters>.Instance);
     }
 
     [TestCase("Frodo", "Frodo Baggins")]

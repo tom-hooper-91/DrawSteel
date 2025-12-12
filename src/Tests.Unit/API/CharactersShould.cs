@@ -5,6 +5,7 @@ using Domain;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Tests.API;
 
@@ -24,7 +25,7 @@ public class CharactersShould
         _getCharacter = A.Fake<IGetCharacter>();
         _updateCharacter = A.Fake<IUpdateCharacter>();
         _deleteCharacter = A.Fake<IDeleteCharacter>();
-        _api = new Characters(_createCharacter, _getCharacter, _updateCharacter, _deleteCharacter);
+        _api = new Characters(_createCharacter, _getCharacter, _updateCharacter, _deleteCharacter, NullLogger<Characters>.Instance);
     }
 
     [TestCase("Frodo")]

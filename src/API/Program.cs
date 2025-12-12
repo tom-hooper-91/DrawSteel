@@ -1,9 +1,56 @@
 using Application;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using Domain;
 using Domain.Repositories;
 using Infrastructure;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure OpenTelemetry
+const string serviceName = "DrawSteel.API";
+var appInsightsConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+var useAzureMonitor = !string.IsNullOrEmpty(appInsightsConnectionString);
+
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName));
+    options.IncludeFormattedMessage = true;
+    options.IncludeScopes = true;
+    
+    if (useAzureMonitor)
+        options.AddAzureMonitorLogExporter(o => o.ConnectionString = appInsightsConnectionString);
+    else
+        options.AddOtlpExporter();
+});
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(serviceName))
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation();
+        
+        if (useAzureMonitor)
+            tracing.AddAzureMonitorTraceExporter(o => o.ConnectionString = appInsightsConnectionString);
+        else
+            tracing.AddOtlpExporter();
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation();
+        
+        if (useAzureMonitor)
+            metrics.AddAzureMonitorMetricExporter(o => o.ConnectionString = appInsightsConnectionString);
+        else
+            metrics.AddOtlpExporter();
+    });
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

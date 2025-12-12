@@ -12,8 +12,21 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - AZURE_FUNCTIONS_ENVIRONMENT=Development
       - DOTNET_ENVIRONMENT=Development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://ds-aspire-dashboard:18889
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_SERVICE_NAME=DrawSteel.API
     depends_on:
       - mongodb
+      - ds-aspire-dashboard
+
+  ds-aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
+    container_name: ds-aspire-dashboard
+    ports:
+      - "18888:18888"
+      - "4317:18889"
+    environment:
+      - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
 
   mongodb:
     image: mongodb/mongodb-community-server:6.0.7-ubi8

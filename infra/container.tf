@@ -1,6 +1,7 @@
 locals {
   dockerhub_token_secret_name            = "registryhubdockercom-thooper91"
   mongo_db_connection_string_secret_name = "mongodb-connection-string"
+  appinsights_connection_string_name     = "applicationinsights-connection-string"
 }
 
 resource "azurerm_log_analytics_workspace" "main" {
@@ -43,6 +44,16 @@ resource "azurerm_container_app" "main" {
         name        = "MONGODB_CONNECTION_STRING"
         secret_name = local.mongo_db_connection_string_secret_name
       }
+
+      env {
+        name        = "APPLICATIONINSIGHTS_CONNECTION_STRING"
+        secret_name = local.appinsights_connection_string_name
+      }
+
+      env {
+        name  = "OTEL_SERVICE_NAME"
+        value = "DrawSteel.API"
+      }
     }
   }
 
@@ -60,6 +71,11 @@ resource "azurerm_container_app" "main" {
   secret {
     name  = local.mongo_db_connection_string_secret_name
     value = azurerm_cosmosdb_account.main.primary_mongodb_connection_string
+  }
+
+  secret {
+    name  = local.appinsights_connection_string_name
+    value = azurerm_application_insights.main.connection_string
   }
 
   lifecycle {

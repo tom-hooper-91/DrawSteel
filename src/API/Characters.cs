@@ -11,18 +11,22 @@ public class Characters(
     ICreateCharacter createCharacter, 
     IGetCharacter getCharacter,
     IUpdateCharacter updateCharacter,
-    IDeleteCharacter deleteCharacter) : ControllerBase
+    IDeleteCharacter deleteCharacter,
+    ILogger<Characters> logger) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCharacterRequest request)
     {
+        logger.LogInformation("Creating character with name: {CharacterName}", request.Name);
         try
         {
             var characterId = await createCharacter.Execute(request);
+            logger.LogInformation("Character created with ID: {CharacterId}", characterId.Value);
             return new OkObjectResult(JsonSerializer.Serialize(characterId));
         }
-        catch
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Failed to create character");
             return Problem();
         }
     }
@@ -30,11 +34,15 @@ public class Characters(
     [HttpGet("{characterId}")]
     public async Task<IActionResult> Get([FromRoute] string characterId)
     {
+        logger.LogInformation("Getting character with ID: {CharacterId}", characterId);
         var id = new CharacterId(new Guid(characterId));
         var character = await getCharacter.Execute(id);
 
         if (character is null)
+        {
+            logger.LogWarning("Character not found: {CharacterId}", characterId);
             return new NotFoundResult();
+        }
 
         return new OkObjectResult(JsonSerializer.Serialize(character));
     }
