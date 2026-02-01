@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "4.54.0"
+      version = "4.58.0"
     }
     azuread = {
       source  = "hashicorp/azuread"
@@ -11,15 +11,15 @@ terraform {
     }
     auth0 = {
       source  = "auth0/auth0"
-      version = "1.36.0"
+      version = "1.39.0"
     }
     github = {
       source  = "integrations/github"
-      version = "6.8.3"
+      version = "6.10.2"
     }
     random = {
       source  = "hashicorp/random"
-      version = "3.7.2"
+      version = "3.8.1"
     }
   }
   backend "azurerm" {}
